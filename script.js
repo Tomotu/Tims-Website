@@ -98,11 +98,17 @@ filterBtns.forEach(btn => {
 // Lightbox
 const lightbox = document.getElementById('lightbox');
 const lightboxImg = document.getElementById('lightbox-img');
+const lightboxCounter = document.getElementById('lightbox-counter');
 
 let currentIndex = 0;
 
 function getVisible() {
     return [...photoItems].filter(item => !item.classList.contains('hidden'));
+}
+
+function updateCounter() {
+    const visible = getVisible();
+    lightboxCounter.textContent = `${currentIndex + 1} / ${visible.length}`;
 }
 
 function openLightbox(index) {
@@ -112,6 +118,7 @@ function openLightbox(index) {
     lightboxImg.alt = visible[currentIndex].querySelector('img').alt;
     lightbox.classList.add('active');
     document.body.style.overflow = 'hidden';
+    updateCounter();
 }
 
 function closeLightbox() {
@@ -123,6 +130,7 @@ function navigate(dir) {
     const visible = getVisible();
     currentIndex = (currentIndex + dir + visible.length) % visible.length;
     lightboxImg.src = visible[currentIndex].querySelector('img').src;
+    updateCounter();
 }
 
 photoItems.forEach(item => {

@@ -470,6 +470,17 @@ footer {
 .lightbox-prev { left: 16px; }
 .lightbox-next { right: 16px; }
 
+.lightbox-counter {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    user-select: none;
+}
+
 /* ── Scroll reveal ── */
 .reveal {
     opacity: 0;
