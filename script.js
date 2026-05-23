@@ -68,6 +68,15 @@ document.querySelectorAll('.photo-item img').forEach(img => {
     }
 });
 
+// Photo count badges on filter buttons
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    const category = btn.dataset.category;
+    const count = category === 'all'
+        ? photoItems.length
+        : [...photoItems].filter(item => item.dataset.category === category).length;
+    btn.innerHTML = `${btn.textContent} <span class="filter-count">${count}</span>`;
+});
+
 // Category filtering
 const filterBtns = document.querySelectorAll('.filter-btn');
 const photoItems = document.querySelectorAll('.photo-item');

@@ -235,6 +235,16 @@ body {
     color: var(--text);
 }
 
+.filter-count {
+    opacity: 0.45;
+    font-size: 0.65rem;
+    margin-left: 4px;
+}
+
+.filter-btn.active .filter-count {
+    opacity: 0.6;
+}
+
 .filter-btn.active {
     background: var(--text);
     border-color: var(--text);
