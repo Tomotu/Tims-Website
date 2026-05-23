@@ -33,6 +33,26 @@ document.querySelectorAll('.photo-item').forEach((item, i) => {
     revealObserver.observe(item);
 });
 
+// Mobile menu
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobile-menu');
+
+function toggleMenu(open) {
+    hamburger.classList.toggle('open', open);
+    hamburger.setAttribute('aria-expanded', open);
+    mobileMenu.classList.toggle('open', open);
+    mobileMenu.setAttribute('aria-hidden', !open);
+    document.body.style.overflow = open ? 'hidden' : '';
+}
+
+hamburger.addEventListener('click', () => {
+    toggleMenu(!hamburger.classList.contains('open'));
+});
+
+document.querySelectorAll('.mobile-link').forEach(link => {
+    link.addEventListener('click', () => toggleMenu(false));
+});
+
 // Navbar scroll state
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
