@@ -1,3 +1,38 @@
+// Scroll-triggered reveal
+const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            revealObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.1 });
+
+// Reveal section elements
+[
+    '.section-header h2',
+    '.filters',
+    '.about-image',
+    '.about-text h2',
+    '.about-text p',
+    '#contact h2',
+    '#contact > p',
+    '.contact-email',
+    '.social-links',
+].forEach(selector => {
+    document.querySelectorAll(selector).forEach(el => {
+        el.classList.add('reveal');
+        revealObserver.observe(el);
+    });
+});
+
+// Stagger photo items by column (3-col layout)
+document.querySelectorAll('.photo-item').forEach((item, i) => {
+    item.classList.add('reveal');
+    item.style.transitionDelay = `${(i % 3) * 80}ms`;
+    revealObserver.observe(item);
+});
+
 // Navbar scroll state
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
