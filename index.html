@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tim Chong — Photography</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <nav id="navbar">
+        <a href="#hero" class="nav-logo">Tim Chong</a>
+        <div class="nav-links">
+            <a href="#gallery">Work</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+        </div>
+        <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+
+    <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+        <a href="#gallery" class="mobile-link">Work</a>
+        <a href="#about" class="mobile-link">About</a>
+        <a href="#contact" class="mobile-link">Contact</a>
+    </div>
+
+    <section id="hero">
+        <div class="hero-content">
+            <h1>Tim Chong</h1>
+            <p class="hero-tagline">Photography</p>
+        </div>
+        <a href="#gallery" class="scroll-indicator" aria-label="Scroll to gallery">↓</a>
+    </section>
+
+    <section id="gallery">
+        <div class="section-header">
+            <h2>Work</h2>
+        </div>
+        <div class="filters" id="filters">
+            <button class="filter-btn active" data-category="all">All</button>
+            <button class="filter-btn" data-category="portraits">Portraits</button>
+            <button class="filter-btn" data-category="landscapes">Landscapes</button>
+            <button class="filter-btn" data-category="street">Street</button>
+            <button class="filter-btn" data-category="events">Events</button>
+        </div>
+        <div class="masonry-grid" id="masonry-grid">
+
+            <!-- Portraits -->
+            <div class="photo-item" data-category="portraits">
+                <img src="https://picsum.photos/id/1005/600/800" alt="Portrait" loading="lazy">
+            </div>
+            <div class="photo-item" data-category="portraits">
+                <img src="https://picsum.photos/id/1010/600/750" alt="Portrait" loading="lazy">
+            </div>
+            <div class="photo-item" data-category="portraits">
+                <img src="https://picsum.photos/id/1025/600/900" alt="Portrait" loading="lazy">
+            </div>
+            <div class="photo-item" data-category="portraits">
+                <img src="https://picsum.photos/id/1027/600/780" alt="Portrait" loading="lazy">
+            </div>
+            <div class="photo-item" data-category="portraits">
+                <img src="https://picsum.photos/id/1062/600/750" alt="Portrait" loading="lazy">
+            </div>
+            <div class="photo-item" data-category="portraits">
+                <img src="https://picsum.photos/id/1074/600/850" alt="Portrait" loading="lazy">
+            </div>
+
+            <!-- Landscapes -->
+            <div class="photo-item" data-category="landscapes">
+                <img src="https://picsum.photos/id/1011/800/550" alt="Landscape" loading="lazy">
+            </div>
+            <div class="photo-item" data-category="landscapes">
+                <img src="https://picsum.photos/id/1015/800/500" alt="Landscape" loading="lazy">
+            </div>
+            <div class="photo-item" data-category="landscapes">
+                <img src="https://picsum.photos/id/1018/800/550" alt="Landscape" loading="lazy">
+            </div>
+            <div class="photo-item" data-category="landscapes">
+                <img src="https://picsum.photos/id/1033/800/550" alt="Landscape" loading="lazy">
+            </div>
+            <div class="photo-item" data-category="landscapes">
+                <img src="https://picsum.photos/id/1043/800/500" alt="Landscape" loading="lazy">
+            </div>
+            <div class="photo-item" data-category="landscapes">
+                <img src="https://picsum.photos/id/1048/800/530" alt="Landscape" loading="lazy">
+            </div>
+
+            <!-- Street -->
+            <div class="photo-item" data-category="street">
+                <img src="https://picsum.photos/id/1035/600/750" alt="Street" loading="lazy">
+            </div>
+            <div class="photo-item" data-category="street">
+                <img src="https://picsum.photos/id/1041/800/600" alt="Street" loading="lazy">
+            </div>
+            <div class="photo-item" data-category="street">
+                <img src="https://picsum.photos/id/1050/600/800" alt="Street" loading="lazy">
+            </div>
+            <div class="photo-item" data-category="street">
+                <img src="https://picsum.photos/id/1055/800/550" alt="Street" loading="lazy">
+            </div>
+            <div class="photo-item" data-category="street">
+                <img src="https://picsum.photos/id/1066/600/700" alt="Street" loading="lazy">
+            </div>
+            <div class="photo-item" data-category="street">
+                <img src="https://picsum.photos/id/1071/700/600" alt="Street" loading="lazy">
+            </div>
+
+            <!-- Events -->
+            <div class="photo-item" data-category="events">
+                <img src="https://picsum.photos/id/1002/800/600" alt="Event" loading="lazy">
+            </div>
+            <div class="photo-item" data-category="events">
+                <img src="https://picsum.photos/id/1006/600/750" alt="Event" loading="lazy">
+            </div>
+            <div class="photo-item" data-category="events">
+                <img src="https://picsum.photos/id/1016/800/550" alt="Event" loading="lazy">
+            </div>
+            <div class="photo-item" data-category="events">
+                <img src="https://picsum.photos/id/1020/600/800" alt="Event" loading="lazy">
+            </div>
+            <div class="photo-item" data-category="events">
+                <img src="https://picsum.photos/id/1024/800/600" alt="Event" loading="lazy">
+            </div>
+            <div class="photo-item" data-category="events">
+                <img src="https://picsum.photos/id/1029/700/650" alt="Event" loading="lazy">
+            </div>
+
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="about-image">
+            <img src="https://picsum.photos/id/1080/700/900" alt="Tim Chong">
+        </div>
+        <div class="about-text">
+            <h2>About</h2>
+            <p>
+                I'm Tim Chong, a photographer based wherever the light is best. My work spans
+                portraiture, landscape, street, and event photography — always chasing moments
+                that feel honest and unhurried.
+            </p>
+            <p>
+                Photography for me is about stillness. Finding the frame within the chaos,
+                and letting the subject breathe inside it.
+            </p>
+            <p>
+                Available for commissions, editorial work, and collaborations. Replace this
+                text with your own story.
+            </p>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2>Get in Touch</h2>
+        <p>Available for commissions, collaborations, and print inquiries.</p>
+        <a href="mailto:tkchong3@gmail.com" class="contact-email">tkchong3@gmail.com</a>
+        <div class="social-links">
+            <a href="#" target="_blank" rel="noopener">Instagram</a>
+            <a href="#" target="_blank" rel="noopener">Twitter</a>
+            <a href="#" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+    </section>
+
+    <footer>
+        <span>© 2026 Tim Chong</span>
+        <span>Photography</span>
+    </footer>
+
+    <!-- Lightbox -->
+    <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
+        <button class="lightbox-close" aria-label="Close">×</button>
+        <button class="lightbox-prev" aria-label="Previous photo">‹</button>
+        <button class="lightbox-next" aria-label="Next photo">›</button>
+        <div class="lightbox-img-container">
+            <img id="lightbox-img" src="" alt="">
+        </div>
+        <div class="lightbox-counter" id="lightbox-counter"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
