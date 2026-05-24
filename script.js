@@ -53,6 +53,22 @@ document.querySelectorAll('.mobile-link').forEach(link => {
     link.addEventListener('click', () => toggleMenu(false));
 });
 
+// Active nav link on scroll
+const navLinks = document.querySelectorAll('.nav-links a');
+
+const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const id = entry.target.id;
+            navLinks.forEach(a => {
+                a.classList.toggle('active', a.getAttribute('href') === `#${id}`);
+            });
+        }
+    });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('#gallery, #about, #contact').forEach(s => sectionObserver.observe(s));
+
 // Navbar scroll state
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
