@@ -148,6 +148,18 @@ lightbox.addEventListener('click', e => {
     if (e.target === lightbox) closeLightbox();
 });
 
+// Lightbox swipe gestures
+let touchStartX = 0;
+
+lightbox.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].clientX;
+}, { passive: true });
+
+lightbox.addEventListener('touchend', e => {
+    const delta = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(delta) > 40) navigate(delta < 0 ? 1 : -1);
+}, { passive: true });
+
 document.addEventListener('keydown', e => {
     if (!lightbox.classList.contains('active')) return;
     if (e.key === 'Escape') closeLightbox();
