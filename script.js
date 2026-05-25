@@ -68,6 +68,20 @@ contactForm.addEventListener('submit', async e => {
     }
 });
 
+// Preloader
+const preloader = document.getElementById('preloader');
+const minDisplay = 1400;
+const startTime = Date.now();
+
+window.addEventListener('load', () => {
+    const elapsed = Date.now() - startTime;
+    const remaining = Math.max(0, minDisplay - elapsed);
+    setTimeout(() => {
+        preloader.classList.add('fade-out');
+        preloader.addEventListener('transitionend', () => preloader.remove(), { once: true });
+    }, remaining);
+});
+
 // Hero tagline typewriter
 const tagline = document.querySelector('.hero-tagline');
 const taglineText = tagline.textContent;
