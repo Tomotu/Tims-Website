@@ -189,7 +189,26 @@
     <section id="contact">
         <h2>Get in Touch</h2>
         <p>Available for commissions, collaborations, and print inquiries.</p>
-        <a href="mailto:tkchong3@gmail.com" class="contact-email">tkchong3@gmail.com</a>
+
+        <form id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" novalidate>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" placeholder="Your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" rows="5" placeholder="Tell me about your project…" required></textarea>
+            </div>
+            <button type="submit" class="form-submit">Send Message</button>
+            <p class="form-status" id="form-status"></p>
+        </form>
+
         <div class="social-links">
             <a href="#" target="_blank" rel="noopener">Instagram</a>
             <a href="#" target="_blank" rel="noopener">Twitter</a>

@@ -33,6 +33,41 @@ document.querySelectorAll('.photo-item').forEach((item, i) => {
     revealObserver.observe(item);
 });
 
+// Contact form
+const contactForm = document.getElementById('contact-form');
+const formStatus = document.getElementById('form-status');
+
+contactForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = contactForm.querySelector('.form-submit');
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    formStatus.className = 'form-status';
+    formStatus.textContent = '';
+
+    try {
+        const res = await fetch(contactForm.action, {
+            method: 'POST',
+            body: new FormData(contactForm),
+            headers: { Accept: 'application/json' },
+        });
+
+        if (res.ok) {
+            formStatus.className = 'form-status success';
+            formStatus.textContent = 'Message sent — I\'ll be in touch soon.';
+            contactForm.reset();
+        } else {
+            throw new Error();
+        }
+    } catch {
+        formStatus.className = 'form-status error';
+        formStatus.textContent = 'Something went wrong. Please try emailing directly.';
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Send Message';
+    }
+});
+
 // Hero background slideshow
 const heroSlides = document.querySelectorAll('.hero-slide');
 let currentSlide = 0;
