@@ -68,6 +68,23 @@ contactForm.addEventListener('submit', async e => {
     }
 });
 
+// Hero tagline typewriter
+const tagline = document.querySelector('.hero-tagline');
+const taglineText = tagline.textContent;
+tagline.textContent = '';
+tagline.style.visibility = 'visible';
+
+let charIndex = 0;
+setTimeout(() => {
+    const type = () => {
+        if (charIndex < taglineText.length) {
+            tagline.textContent += taglineText[charIndex++];
+            setTimeout(type, 90);
+        }
+    };
+    type();
+}, 800);
+
 // Hero background slideshow
 const heroSlides = document.querySelectorAll('.hero-slide');
 let currentSlide = 0;
