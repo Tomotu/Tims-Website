@@ -69,10 +69,15 @@ const sectionObserver = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('#gallery, #about, #contact').forEach(s => sectionObserver.observe(s));
 
+// Back to top
+const backToTop = document.getElementById('back-to-top');
+backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
 // Navbar scroll state
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
     navbar.classList.toggle('scrolled', window.scrollY > 60);
+    backToTop.classList.toggle('visible', window.scrollY > 400);
 }, { passive: true });
 
 // Lazy-load fade-in
