@@ -4,12 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tim Chong — Photography</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230d0d0d'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Georgia%2C serif' font-size='13' font-weight='400' fill='%23e8e8e8' letter-spacing='1'%3ETC%3C/text%3E%3C/svg%3E">
+
+    <!-- SEO -->
+    <meta name="description" content="Photography by Tim Chong — portraits, landscapes, street, and events.">
+    <meta name="author" content="Tim Chong">
+    <link rel="canonical" href="https://tomotu.github.io/Tims-Website/">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tomotu.github.io/Tims-Website/">
+    <meta property="og:title" content="Tim Chong — Photography">
+    <meta property="og:description" content="Photography by Tim Chong — portraits, landscapes, street, and events.">
+    <meta property="og:image" content="https://picsum.photos/id/1005/1200/630">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Tim Chong — Photography">
+    <meta name="twitter:description" content="Photography by Tim Chong — portraits, landscapes, street, and events.">
+    <meta name="twitter:image" content="https://picsum.photos/id/1005/1200/630">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+    <div id="scroll-progress"></div>
+
+    <div id="preloader">
+        <span class="preloader-name">Tim Chong</span>
+    </div>
 
     <nav id="navbar">
         <a href="#hero" class="nav-logo">Tim Chong</a>
@@ -18,6 +46,7 @@
             <a href="#about">About</a>
             <a href="#contact">Contact</a>
         </div>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">◑</button>
         <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
             <span></span>
             <span></span>
@@ -32,6 +61,13 @@
     </div>
 
     <section id="hero">
+        <div class="hero-slides" id="hero-slides">
+            <div class="hero-slide active" style="background-image:url('https://picsum.photos/id/1018/1600/900')"></div>
+            <div class="hero-slide" style="background-image:url('https://picsum.photos/id/1043/1600/900')"></div>
+            <div class="hero-slide" style="background-image:url('https://picsum.photos/id/1005/1600/900')"></div>
+            <div class="hero-slide" style="background-image:url('https://picsum.photos/id/1035/1600/900')"></div>
+        </div>
+        <div class="hero-overlay"></div>
         <div class="hero-content">
             <h1>Tim Chong</h1>
             <p class="hero-tagline">Photography</p>
@@ -42,6 +78,7 @@
     <section id="gallery">
         <div class="section-header">
             <h2>Work</h2>
+            <span id="photo-count" class="photo-count"></span>
         </div>
         <div class="filters" id="filters">
             <button class="filter-btn active" data-category="all">All</button>
@@ -133,6 +170,9 @@
             </div>
 
         </div>
+        <div class="load-more-wrap">
+            <button id="load-more-btn" class="load-more-btn">Load More</button>
+        </div>
     </section>
 
     <section id="about">
@@ -160,7 +200,26 @@
     <section id="contact">
         <h2>Get in Touch</h2>
         <p>Available for commissions, collaborations, and print inquiries.</p>
-        <a href="mailto:tkchong3@gmail.com" class="contact-email">tkchong3@gmail.com</a>
+
+        <form id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" novalidate>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" placeholder="Your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" rows="5" placeholder="Tell me about your project…" required></textarea>
+            </div>
+            <button type="submit" class="form-submit">Send Message</button>
+            <p class="form-status" id="form-status"></p>
+        </form>
+
         <div class="social-links">
             <a href="#" target="_blank" rel="noopener">Instagram</a>
             <a href="#" target="_blank" rel="noopener">Twitter</a>
@@ -169,7 +228,7 @@
     </section>
 
     <footer>
-        <span>© 2026 Tim Chong</span>
+        <span>© <span id="copyright-year"></span> Tim Chong</span>
         <span>Photography</span>
     </footer>
 
@@ -179,11 +238,15 @@
         <button class="lightbox-prev" aria-label="Previous photo">‹</button>
         <button class="lightbox-next" aria-label="Next photo">›</button>
         <div class="lightbox-img-container">
-            <img id="lightbox-img" src="" alt="">
+            <img id="lightbox-img" src="" alt="" title="Click to zoom">
         </div>
         <div class="lightbox-counter" id="lightbox-counter"></div>
+        <a id="lightbox-download" class="lightbox-download" href="#" download target="_blank" rel="noopener" aria-label="Download photo">↓</a>
     </div>
 
     <script src="script.js"></script>
+
+    <button id="back-to-top" aria-label="Back to top">↑</button>
+
 </body>
 </html>
