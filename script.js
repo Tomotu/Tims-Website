@@ -260,9 +260,21 @@ function navigate(dir) {
 }
 
 photoItems.forEach(item => {
+    item.setAttribute('tabindex', '0');
+    item.setAttribute('role', 'button');
+    item.setAttribute('aria-label', `View ${item.dataset.category} photo`);
+
     item.addEventListener('click', () => {
         const visible = getVisible();
         openLightbox(visible.indexOf(item));
+    });
+
+    item.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            const visible = getVisible();
+            openLightbox(visible.indexOf(item));
+        }
     });
 });
 

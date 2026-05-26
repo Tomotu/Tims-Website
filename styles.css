@@ -370,6 +370,11 @@ body {
     opacity: 1;
 }
 
+.photo-item:focus-visible {
+    outline: 2px solid rgba(232, 232, 232, 0.6);
+    outline-offset: 2px;
+}
+
 .photo-item.hidden {
     display: none;
 }
