@@ -33,6 +33,8 @@
 </head>
 <body>
 
+    <div id="scroll-progress"></div>
+
     <div id="preloader">
         <span class="preloader-name">Tim Chong</span>
     </div>
@@ -44,6 +46,7 @@
             <a href="#about">About</a>
             <a href="#contact">Contact</a>
         </div>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">◑</button>
         <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
             <span></span>
             <span></span>
@@ -75,6 +78,7 @@
     <section id="gallery">
         <div class="section-header">
             <h2>Work</h2>
+            <span id="photo-count" class="photo-count"></span>
         </div>
         <div class="filters" id="filters">
             <button class="filter-btn active" data-category="all">All</button>
@@ -166,6 +170,9 @@
             </div>
 
         </div>
+        <div class="load-more-wrap">
+            <button id="load-more-btn" class="load-more-btn">Load More</button>
+        </div>
     </section>
 
     <section id="about">
@@ -221,7 +228,7 @@
     </section>
 
     <footer>
-        <span>© 2026 Tim Chong</span>
+        <span>© <span id="copyright-year"></span> Tim Chong</span>
         <span>Photography</span>
     </footer>
 
@@ -231,9 +238,10 @@
         <button class="lightbox-prev" aria-label="Previous photo">‹</button>
         <button class="lightbox-next" aria-label="Next photo">›</button>
         <div class="lightbox-img-container">
-            <img id="lightbox-img" src="" alt="">
+            <img id="lightbox-img" src="" alt="" title="Click to zoom">
         </div>
         <div class="lightbox-counter" id="lightbox-counter"></div>
+        <a id="lightbox-download" class="lightbox-download" href="#" download target="_blank" rel="noopener" aria-label="Download photo">↓</a>
     </div>
 
     <script src="script.js"></script>
