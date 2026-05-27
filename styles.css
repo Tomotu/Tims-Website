@@ -174,12 +174,14 @@ body {
     justify-content: center;
     gap: 40px;
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
-    transition: opacity 0.35s ease;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
 }
 
 .mobile-menu.open {
     opacity: 1;
+    visibility: visible;
     pointer-events: all;
 }
 
@@ -356,6 +358,13 @@ body {
     cursor: pointer;
     position: relative;
     background: var(--bg-2);
+    touch-action: manipulation;
+}
+
+@media (hover: none) {
+    .photo-item:hover img { transform: none; }
+    .photo-item::after    { display: none; }
+    .photo-cat            { display: none; }
 }
 
 .photo-item img {
