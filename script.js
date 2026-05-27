@@ -1,47 +1,56 @@
 'use strict';
 
-// ── Constants & state ─────────────────────────────────────────────────────────
+// ── Image Gallery Configuration ────────────────────────────────────────────
+const GALLERY_CONFIG = {
+    portraits: 'images/portraits/',
+    landscapes: 'images/landscapes/',
+    sports: 'images/sports/',
+    events: 'images/events/',
+};
+
+// ── Constants & state ────────────────────────────────────────────────────────
 const BATCH_SIZE = 12;
-let currentCategory  = 'all';
-let loadedAll        = false;
-let currentLbIndex   = 0;
-let lastFocusedItem  = null;
-let filterTimeout    = null;
-let touchStartX      = 0;
+let currentCategory = 'all';
+let loadedAll = false;
+let currentLbIndex = 0;
+let lastFocusedItem = null;
+let filterTimeout = null;
+let touchStartX = 0;
+let allPhotos = [];
 
-// ── DOM refs ──────────────────────────────────────────────────────────────────
-const preloader        = document.getElementById('preloader');
-const scrollProgress   = document.getElementById('scroll-progress');
-const navbar           = document.getElementById('navbar');
-const hamburger        = document.getElementById('hamburger');
-const mobileMenu       = document.getElementById('mobile-menu');
-const themeToggle      = document.getElementById('theme-toggle');
-const navLinks         = document.querySelectorAll('.nav-links a');
-const photoItems       = document.querySelectorAll('.photo-item');
-const filterBtns       = document.querySelectorAll('.filter-btn');
-const photoCountEl     = document.getElementById('photo-count');
-const loadMoreBtn      = document.getElementById('load-more-btn');
-const backToTop        = document.getElementById('back-to-top');
-const lightbox         = document.getElementById('lightbox');
-const lightboxImg      = document.getElementById('lightbox-img');
-const lightboxCounter  = document.getElementById('lightbox-counter');
+// ── DOM refs ─────────────────────────────────────────────────────────────────
+const preloader = document.getElementById('preloader');
+const scrollProgress = document.getElementById('scroll-progress');
+const navbar = document.getElementById('navbar');
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobile-menu');
+const themeToggle = document.getElementById('theme-toggle');
+const navLinks = document.querySelectorAll('.nav-links a');
+const masonryGrid = document.getElementById('masonry-grid');
+const filterBtns = document.querySelectorAll('.filter-btn');
+const photoCountEl = document.getElementById('photo-count');
+const loadMoreBtn = document.getElementById('load-more-btn');
+const backToTop = document.getElementById('back-to-top');
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightbox-img');
+const lightboxCounter = document.getElementById('lightbox-counter');
 const lightboxDownload = document.getElementById('lightbox-download');
-const heroSlides       = document.querySelectorAll('.hero-slide');
-const tagline          = document.querySelector('.hero-tagline');
-const contactForm      = document.getElementById('contact-form');
-const formStatus       = document.getElementById('form-status');
-const copyrightYear    = document.getElementById('copyright-year');
+const heroSlides = document.querySelectorAll('.hero-slide');
+const tagline = document.querySelector('.hero-tagline');
+const contactForm = document.getElementById('contact-form');
+const formStatus = document.getElementById('form-status');
+const copyrightYear = document.getElementById('copyright-year');
 
-// ── Preloader ─────────────────────────────────────────────────────────────────
+// ── Preloader ────────────────────────────────────────────────────────────────
 setTimeout(() => {
     preloader.classList.add('fade-out');
     preloader.addEventListener('transitionend', () => preloader.remove(), { once: true });
-}, 1400);
+}, 800);
 
-// ── Copyright year ────────────────────────────────────────────────────────────
+// ── Copyright year ───────────────────────────────────────────────────────────
 if (copyrightYear) copyrightYear.textContent = new Date().getFullYear();
 
-// ── Scroll events ─────────────────────────────────────────────────────────────
+// ── Scroll events ────────────────────────────────────────────────────────────
 window.addEventListener('scroll', () => {
     navbar.classList.toggle('scrolled', window.scrollY > 60);
     backToTop.classList.toggle('visible', window.scrollY > 400);
@@ -61,10 +70,10 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// ── Back to top ───────────────────────────────────────────────────────────────
+// ── Back to top ──────────────────────────────────────────────────────────────
 backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-// ── Theme toggle ──────────────────────────────────────────────────────────────
+// ── Theme toggle ─────────────────────────────────────────────────────────────
 function setTheme(light) {
     document.body.classList.toggle('light-mode', light);
     themeToggle.textContent = light ? '○' : '◑';
@@ -74,7 +83,7 @@ function setTheme(light) {
 setTheme(localStorage.getItem('theme') === 'light');
 themeToggle.addEventListener('click', () => setTheme(!document.body.classList.contains('light-mode')));
 
-// ── Hero slideshow ────────────────────────────────────────────────────────────
+// ── Hero slideshow ───────────────────────────────────────────────────────────
 let currentSlide = 0;
 setInterval(() => {
     heroSlides[currentSlide].classList.remove('active');
@@ -82,7 +91,7 @@ setInterval(() => {
     heroSlides[currentSlide].classList.add('active');
 }, 5000);
 
-// ── Hero tagline typewriter ───────────────────────────────────────────────────
+// ── Hero tagline typewriter ──────────────────────────────────────────────────
 const taglineText = tagline.textContent;
 tagline.textContent = '';
 let charIndex = 0;
@@ -96,7 +105,7 @@ setTimeout(() => {
     type();
 }, 800);
 
-// ── Mobile menu ───────────────────────────────────────────────────────────────
+// ── Mobile menu ──────────────────────────────────────────────────────────────
 function toggleMenu(open) {
     hamburger.classList.toggle('open', open);
     hamburger.setAttribute('aria-expanded', open);
@@ -107,7 +116,7 @@ function toggleMenu(open) {
 hamburger.addEventListener('click', () => toggleMenu(!hamburger.classList.contains('open')));
 document.querySelectorAll('.mobile-link').forEach(l => l.addEventListener('click', () => toggleMenu(false)));
 
-// ── Active nav section ────────────────────────────────────────────────────────
+// ── Active nav section ───────────────────────────────────────────────────────
 const sectionObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -117,7 +126,7 @@ const sectionObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.3 });
 document.querySelectorAll('#gallery, #about, #contact').forEach(s => sectionObserver.observe(s));
 
-// ── Scroll reveal ─────────────────────────────────────────────────────────────
+// ── Scroll reveal ────────────────────────────────────────────────────────────
 const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -133,56 +142,143 @@ const revealObserver = new IntersectionObserver((entries) => {
     document.querySelectorAll(sel).forEach(el => { el.classList.add('reveal'); revealObserver.observe(el); });
 });
 
-// ── Lazy-load fade-in ─────────────────────────────────────────────────────────
-document.querySelectorAll('.photo-item img').forEach(img => {
-    if (img.complete) {
-        img.classList.add('loaded');
-    } else {
-        img.addEventListener('load',  () => img.classList.add('loaded'));
-        img.addEventListener('error', () => img.classList.add('loaded'));
-    }
-});
+// ── Dynamic Gallery Loading ──────────────────────────────────────────────────
+async function loadGallery() {
+    allPhotos = [];
 
-// ── Hover caption & reveal setup ─────────────────────────────────────────────
-photoItems.forEach((item, i) => {
-    // Caption
-    const cap = document.createElement('span');
-    cap.className = 'photo-cat';
-    cap.textContent = item.dataset.category;
-    item.appendChild(cap);
+    // Create a test to check if image exists
+    const imageExists = (src) => {
+        return new Promise(resolve => {
+            const img = new Image();
+            img.onload = () => resolve(true);
+            img.onerror = () => resolve(false);
+            img.src = src;
+        });
+    };
 
-    // Keyboard accessibility
-    item.setAttribute('tabindex', '0');
-    item.setAttribute('role', 'button');
-    item.setAttribute('aria-label', `View ${item.dataset.category} photo`);
+    // Load images from each category
+    for (const [category, folderPath] of Object.entries(GALLERY_CONFIG)) {
+        // Try loading images sequentially (1-20 per folder)
+        for (let i = 1; i <= 20; i++) {
+            // Try different naming patterns
+            const patterns = [
+                `${folderPath}${i}.jpg`,
+                `${folderPath}image-${i}.jpg`,
+                `${folderPath}photo-${i}.jpg`,
+            ];
 
-    item.addEventListener('click', () => { lastFocusedItem = item; openLightbox(getVisible().indexOf(item)); });
-    item.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            lastFocusedItem = item;
-            openLightbox(getVisible().indexOf(item));
+            for (const src of patterns) {
+                if (await imageExists(src)) {
+                    allPhotos.push({
+                        src,
+                        category,
+                        index: allPhotos.length,
+                    });
+                    break; // Found one, move to next number
+                }
+            }
         }
-    });
-});
 
-// ── Gallery photo count ───────────────────────────────────────────────────────
+        // Also check for specific uploaded files from your repo
+        const uploadedFiles = {
+            portraits: ['Alicia-20thMay2026-67.jpg'],
+            sports: ['DarylPadelTournament-23rdMay2026-53 (1).jpg'],
+            events: ['Lane23-EliBrown-26thApril2025-22.jpg', 'Kyo-28thDec2025-35.jpg'],
+            landscapes: [],
+        };
+
+        for (const file of (uploadedFiles[category] || [])) {
+            const src = `${folderPath}${file}`;
+            if (await imageExists(src) && !allPhotos.some(p => p.src === src)) {
+                allPhotos.push({
+                    src,
+                    category,
+                    index: allPhotos.length,
+                });
+            }
+        }
+    }
+
+    // Render the gallery
+    renderGallery();
+}
+
+function renderGallery() {
+    masonryGrid.innerHTML = '';
+
+    allPhotos.forEach((photo, i) => {
+        const photoItem = document.createElement('div');
+        photoItem.className = 'photo-item';
+        photoItem.dataset.category = photo.category;
+        photoItem.dataset.index = i;
+        photoItem.setAttribute('tabindex', '0');
+        photoItem.setAttribute('role', 'button');
+        photoItem.setAttribute('aria-label', `View ${photo.category} photo`);
+
+        const img = document.createElement('img');
+        img.src = photo.src;
+        img.alt = photo.category;
+        img.loading = 'lazy';
+
+        if (img.complete) {
+            img.classList.add('loaded');
+        } else {
+            img.addEventListener('load', () => img.classList.add('loaded'));
+            img.addEventListener('error', () => img.classList.add('loaded'));
+        }
+
+        const cap = document.createElement('span');
+        cap.className = 'photo-cat';
+        cap.textContent = photo.category;
+
+        photoItem.appendChild(img);
+        photoItem.appendChild(cap);
+
+        photoItem.addEventListener('click', () => { lastFocusedItem = photoItem; openLightbox(getVisible().indexOf(photoItem)); });
+        photoItem.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                lastFocusedItem = photoItem;
+                openLightbox(getVisible().indexOf(photoItem));
+            }
+        });
+
+        masonryGrid.appendChild(photoItem);
+    });
+
+    // Hide items beyond batch size
+    const photoItems = document.querySelectorAll('.photo-item');
+    photoItems.forEach((item, i) => {
+        if (i >= BATCH_SIZE) item.classList.add('hidden');
+    });
+
+    updatePhotoCount();
+    updateFilterCounts();
+}
+
+// ── Gallery photo count ──────────────────────────────────────────────────────
 function updatePhotoCount() {
     if (!photoCountEl) return;
+    const photoItems = document.querySelectorAll('.photo-item');
     const n = [...photoItems].filter(item => !item.classList.contains('hidden')).length;
     photoCountEl.textContent = `${n} photo${n !== 1 ? 's' : ''}`;
 }
 
-// ── Load more ─────────────────────────────────────────────────────────────────
-photoItems.forEach((item, i) => {
-    item.dataset.index = i;
-    if (i >= BATCH_SIZE) item.classList.add('hidden');
-});
-updatePhotoCount();
+// ── Photo count badges on filter buttons ─────────────────────────────────────
+function updateFilterCounts() {
+    filterBtns.forEach(btn => {
+        const cat = btn.dataset.category;
+        const photoItems = document.querySelectorAll('.photo-item');
+        const n = cat === 'all' ? photoItems.length : [...photoItems].filter(i => i.dataset.category === cat).length;
+        btn.innerHTML = `${btn.textContent.split('<')[0].trim()} <span class="filter-count">${n}</span>`;
+    });
+}
 
+// ── Load more ────────────────────────────────────────────────────────────────
 if (loadMoreBtn) {
     loadMoreBtn.addEventListener('click', () => {
         loadedAll = true;
+        const photoItems = document.querySelectorAll('.photo-item');
         photoItems.forEach(item => {
             if (currentCategory === 'all' || item.dataset.category === currentCategory) {
                 item.classList.remove('hidden');
@@ -193,14 +289,7 @@ if (loadMoreBtn) {
     });
 }
 
-// ── Photo count badges on filter buttons ─────────────────────────────────────
-filterBtns.forEach(btn => {
-    const cat = btn.dataset.category;
-    const n = cat === 'all' ? photoItems.length : [...photoItems].filter(i => i.dataset.category === cat).length;
-    btn.innerHTML = `${btn.textContent} <span class="filter-count">${n}</span>`;
-});
-
-// ── Category filtering ────────────────────────────────────────────────────────
+// ── Category filtering ───────────────────────────────────────────────────────
 filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         currentCategory = btn.dataset.category;
@@ -208,6 +297,7 @@ filterBtns.forEach(btn => {
         btn.classList.add('active');
         if (filterTimeout) clearTimeout(filterTimeout);
 
+        const photoItems = document.querySelectorAll('.photo-item');
         const toHide = [...photoItems].filter(item =>
             !item.classList.contains('hidden') &&
             currentCategory !== 'all' && item.dataset.category !== currentCategory
@@ -242,8 +332,9 @@ filterBtns.forEach(btn => {
     });
 });
 
-// ── Lightbox ──────────────────────────────────────────────────────────────────
+// ── Lightbox ─────────────────────────────────────────────────────────────────
 function getVisible() {
+    const photoItems = document.querySelectorAll('.photo-item');
     return [...photoItems].filter(item => !item.classList.contains('hidden'));
 }
 
@@ -308,7 +399,7 @@ document.addEventListener('keydown', e => {
     if (e.key === 'ArrowLeft') navigate(-1);
 });
 
-// ── Contact form ──────────────────────────────────────────────────────────────
+// ── Contact form ─────────────────────────────────────────────────────────────
 contactForm.addEventListener('submit', async e => {
     e.preventDefault();
     const btn = contactForm.querySelector('.form-submit');
@@ -333,3 +424,6 @@ contactForm.addEventListener('submit', async e => {
         btn.textContent = 'Send Message';
     }
 });
+
+// ── Initialize Gallery ───────────────────────────────────────────────────────
+loadGallery();
