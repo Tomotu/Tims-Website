@@ -33,13 +33,12 @@ const formStatus       = document.getElementById('form-status');
 const copyrightYear    = document.getElementById('copyright-year');
 
 // ── Preloader ─────────────────────────────────────────────────────────────────
-const startTime = Date.now();
-window.addEventListener('load', () => {
-    const remaining = Math.max(0, 1400 - (Date.now() - startTime));
+// Use DOMContentLoaded + fixed delay so missing/slow images never block the UI
+document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         preloader.classList.add('fade-out');
         preloader.addEventListener('transitionend', () => preloader.remove(), { once: true });
-    }, remaining);
+    }, 1400);
 });
 
 // ── Copyright year ────────────────────────────────────────────────────────────
