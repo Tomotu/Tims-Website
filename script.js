@@ -1,13 +1,5 @@
 'use strict';
 
-// ── Image Gallery Configuration ────────────────────────────────────────────
-const GALLERY_CONFIG = {
-    portraits: 'images/portraits/',
-    landscapes: 'images/landscapes/',
-    sports: 'images/sports/',
-    events: 'images/events/',
-};
-
 // ── Constants & state ────────────────────────────────────────────────────────
 const BATCH_SIZE = 12;
 let currentCategory = 'all';
@@ -16,7 +8,6 @@ let currentLbIndex = 0;
 let lastFocusedItem = null;
 let filterTimeout = null;
 let touchStartX = 0;
-let allPhotos = [];
 
 // ── DOM refs ─────────────────────────────────────────────────────────────────
 const preloader = document.getElementById('preloader');
@@ -26,7 +17,7 @@ const hamburger = document.getElementById('hamburger');
 const mobileMenu = document.getElementById('mobile-menu');
 const themeToggle = document.getElementById('theme-toggle');
 const navLinks = document.querySelectorAll('.nav-links a');
-const masonryGrid = document.getElementById('masonry-grid');
+const photoItems = document.querySelectorAll('.photo-item');
 const filterBtns = document.querySelectorAll('.filter-btn');
 const photoCountEl = document.getElementById('photo-count');
 const loadMoreBtn = document.getElementById('load-more-btn');
@@ -42,10 +33,14 @@ const formStatus = document.getElementById('form-status');
 const copyrightYear = document.getElementById('copyright-year');
 
 // ── Preloader ────────────────────────────────────────────────────────────────
-setTimeout(() => {
-    preloader.classList.add('fade-out');
-    preloader.addEventListener('transitionend', () => preloader.remove(), { once: true });
-}, 800);
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        preloader.classList.add('fade-out');
+        preloader.addEventListener('transitionend', () => {
+            if (preloader.parentNode) preloader.remove();
+        }, { once: true });
+    }, 500);
+});
 
 // ── Copyright year ───────────────────────────────────────────────────────────
 if (copyrightYear) copyrightYear.textContent = new Date().getFullYear();
@@ -58,17 +53,6 @@ window.addEventListener('scroll', () => {
     const scrollable = document.documentElement.scrollHeight - window.innerHeight;
     if (scrollProgress) scrollProgress.style.width = `${(window.scrollY / scrollable) * 100}%`;
 }, { passive: true });
-
-// ── Smooth scroll with nav offset ────────────────────────────────────────────
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', e => {
-        const target = document.querySelector(anchor.getAttribute('href'));
-        if (!target) return;
-        e.preventDefault();
-        const top = target.getBoundingClientRect().top + window.scrollY - (navbar.offsetHeight + 16);
-        window.scrollTo({ top, behavior: 'smooth' });
-    });
-});
 
 // ── Back to top ──────────────────────────────────────────────────────────────
 backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
@@ -126,7 +110,7 @@ const sectionObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.3 });
 document.querySelectorAll('#gallery, #about, #contact').forEach(s => sectionObserver.observe(s));
 
-// ── Scroll reveal ────────────────────────────────────────────────────────────
+// ── Scroll reveal ───────────────────────────────────���────────────────────────
 const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -142,143 +126,59 @@ const revealObserver = new IntersectionObserver((entries) => {
     document.querySelectorAll(sel).forEach(el => { el.classList.add('reveal'); revealObserver.observe(el); });
 });
 
-// ── Dynamic Gallery Loading ──────────────────────────────────────────────────
-async function loadGallery() {
-    allPhotos = [];
-
-    // Create a test to check if image exists
-    const imageExists = (src) => {
-        return new Promise(resolve => {
-            const img = new Image();
-            img.onload = () => resolve(true);
-            img.onerror = () => resolve(false);
-            img.src = src;
-        });
-    };
-
-    // Load images from each category
-    for (const [category, folderPath] of Object.entries(GALLERY_CONFIG)) {
-        // Try loading images sequentially (1-20 per folder)
-        for (let i = 1; i <= 20; i++) {
-            // Try different naming patterns
-            const patterns = [
-                `${folderPath}${i}.jpg`,
-                `${folderPath}image-${i}.jpg`,
-                `${folderPath}photo-${i}.jpg`,
-            ];
-
-            for (const src of patterns) {
-                if (await imageExists(src)) {
-                    allPhotos.push({
-                        src,
-                        category,
-                        index: allPhotos.length,
-                    });
-                    break; // Found one, move to next number
-                }
-            }
-        }
-
-        // Also check for specific uploaded files from your repo
-        const uploadedFiles = {
-            portraits: ['Alicia-20thMay2026-67.jpg'],
-            sports: ['DarylPadelTournament-23rdMay2026-53 (1).jpg'],
-            events: ['Lane23-EliBrown-26thApril2025-22.jpg', 'Kyo-28thDec2025-35.jpg'],
-            landscapes: [],
-        };
-
-        for (const file of (uploadedFiles[category] || [])) {
-            const src = `${folderPath}${file}`;
-            if (await imageExists(src) && !allPhotos.some(p => p.src === src)) {
-                allPhotos.push({
-                    src,
-                    category,
-                    index: allPhotos.length,
-                });
-            }
-        }
-    }
-
-    // Render the gallery
-    renderGallery();
-}
-
-function renderGallery() {
-    masonryGrid.innerHTML = '';
-
-    allPhotos.forEach((photo, i) => {
-        const photoItem = document.createElement('div');
-        photoItem.className = 'photo-item';
-        photoItem.dataset.category = photo.category;
-        photoItem.dataset.index = i;
-        photoItem.setAttribute('tabindex', '0');
-        photoItem.setAttribute('role', 'button');
-        photoItem.setAttribute('aria-label', `View ${photo.category} photo`);
-
-        const img = document.createElement('img');
-        img.src = photo.src;
-        img.alt = photo.category;
-        img.loading = 'lazy';
-
+// ── Lazy-load fade-in ────────────────────────────────────────────────────────
+photoItems.forEach(item => {
+    const img = item.querySelector('img');
+    if (img) {
         if (img.complete) {
             img.classList.add('loaded');
         } else {
             img.addEventListener('load', () => img.classList.add('loaded'));
             img.addEventListener('error', () => img.classList.add('loaded'));
         }
+    }
+});
 
-        const cap = document.createElement('span');
-        cap.className = 'photo-cat';
-        cap.textContent = photo.category;
+// ── Hover caption & reveal setup ─────────────────────────────────────────────
+photoItems.forEach((item, i) => {
+    // Caption
+    const cap = document.createElement('span');
+    cap.className = 'photo-cat';
+    cap.textContent = item.dataset.category;
+    item.appendChild(cap);
 
-        photoItem.appendChild(img);
-        photoItem.appendChild(cap);
+    // Keyboard accessibility
+    item.setAttribute('tabindex', '0');
+    item.setAttribute('role', 'button');
+    item.setAttribute('aria-label', `View ${item.dataset.category} photo`);
 
-        photoItem.addEventListener('click', () => { lastFocusedItem = photoItem; openLightbox(getVisible().indexOf(photoItem)); });
-        photoItem.addEventListener('keydown', e => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                lastFocusedItem = photoItem;
-                openLightbox(getVisible().indexOf(photoItem));
-            }
-        });
-
-        masonryGrid.appendChild(photoItem);
+    item.addEventListener('click', () => { lastFocusedItem = item; openLightbox(getVisible().indexOf(item)); });
+    item.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            lastFocusedItem = item;
+            openLightbox(getVisible().indexOf(item));
+        }
     });
-
-    // Hide items beyond batch size
-    const photoItems = document.querySelectorAll('.photo-item');
-    photoItems.forEach((item, i) => {
-        if (i >= BATCH_SIZE) item.classList.add('hidden');
-    });
-
-    updatePhotoCount();
-    updateFilterCounts();
-}
+});
 
 // ── Gallery photo count ──────────────────────────────────────────────────────
 function updatePhotoCount() {
     if (!photoCountEl) return;
-    const photoItems = document.querySelectorAll('.photo-item');
     const n = [...photoItems].filter(item => !item.classList.contains('hidden')).length;
     photoCountEl.textContent = `${n} photo${n !== 1 ? 's' : ''}`;
 }
 
-// ── Photo count badges on filter buttons ─────────────────────────────────────
-function updateFilterCounts() {
-    filterBtns.forEach(btn => {
-        const cat = btn.dataset.category;
-        const photoItems = document.querySelectorAll('.photo-item');
-        const n = cat === 'all' ? photoItems.length : [...photoItems].filter(i => i.dataset.category === cat).length;
-        btn.innerHTML = `${btn.textContent.split('<')[0].trim()} <span class="filter-count">${n}</span>`;
-    });
-}
-
 // ── Load more ────────────────────────────────────────────────────────────────
+photoItems.forEach((item, i) => {
+    item.dataset.index = i;
+    if (i >= BATCH_SIZE) item.classList.add('hidden');
+});
+updatePhotoCount();
+
 if (loadMoreBtn) {
     loadMoreBtn.addEventListener('click', () => {
         loadedAll = true;
-        const photoItems = document.querySelectorAll('.photo-item');
         photoItems.forEach(item => {
             if (currentCategory === 'all' || item.dataset.category === currentCategory) {
                 item.classList.remove('hidden');
@@ -289,6 +189,13 @@ if (loadMoreBtn) {
     });
 }
 
+// ── Photo count badges on filter buttons ─────────────────────────────────────
+filterBtns.forEach(btn => {
+    const cat = btn.dataset.category;
+    const n = cat === 'all' ? photoItems.length : [...photoItems].filter(i => i.dataset.category === cat).length;
+    btn.innerHTML = `${btn.textContent} <span class="filter-count">${n}</span>`;
+});
+
 // ── Category filtering ───────────────────────────────────────────────────────
 filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -297,7 +204,6 @@ filterBtns.forEach(btn => {
         btn.classList.add('active');
         if (filterTimeout) clearTimeout(filterTimeout);
 
-        const photoItems = document.querySelectorAll('.photo-item');
         const toHide = [...photoItems].filter(item =>
             !item.classList.contains('hidden') &&
             currentCategory !== 'all' && item.dataset.category !== currentCategory
@@ -334,7 +240,6 @@ filterBtns.forEach(btn => {
 
 // ── Lightbox ─────────────────────────────────────────────────────────────────
 function getVisible() {
-    const photoItems = document.querySelectorAll('.photo-item');
     return [...photoItems].filter(item => !item.classList.contains('hidden'));
 }
 
@@ -424,6 +329,3 @@ contactForm.addEventListener('submit', async e => {
         btn.textContent = 'Send Message';
     }
 });
-
-// ── Initialize Gallery ───────────────────────────────────────────────────────
-loadGallery();
