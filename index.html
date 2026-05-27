@@ -13,18 +13,18 @@
     <meta name="author" content="Tim Chong">
     <link rel="canonical" href="https://tomotu.github.io/Tims-Website/">
 
-    <!-- Open Graph -->
+    <!-- Open Graph — replace og-preview.jpg with a landscape photo (1200×630px) -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://tomotu.github.io/Tims-Website/">
     <meta property="og:title" content="Tim Chong — Photography">
     <meta property="og:description" content="Photography by Tim Chong — portraits, landscapes, street, and events.">
-    <meta property="og:image" content="https://picsum.photos/id/1005/1200/630">
+    <meta property="og:image" content="https://tomotu.github.io/Tims-Website/images/og-preview.jpg">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Tim Chong — Photography">
     <meta name="twitter:description" content="Photography by Tim Chong — portraits, landscapes, street, and events.">
-    <meta name="twitter:image" content="https://picsum.photos/id/1005/1200/630">
+    <meta name="twitter:image" content="https://tomotu.github.io/Tims-Website/images/og-preview.jpg">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -61,11 +61,16 @@
     </div>
 
     <section id="hero">
+        <!--
+            HERO SLIDESHOW — 4 full-width background photos
+            Save your photos as: images/hero/slide-1.jpg through slide-4.jpg
+            Recommended size: 1600px wide, landscape orientation
+        -->
         <div class="hero-slides" id="hero-slides">
-            <div class="hero-slide active" style="background-image:url('https://picsum.photos/id/1018/1600/900')"></div>
-            <div class="hero-slide" style="background-image:url('https://picsum.photos/id/1043/1600/900')"></div>
-            <div class="hero-slide" style="background-image:url('https://picsum.photos/id/1005/1600/900')"></div>
-            <div class="hero-slide" style="background-image:url('https://picsum.photos/id/1035/1600/900')"></div>
+            <div class="hero-slide active" style="background-image:url('images/hero/slide-1.jpg')"></div>
+            <div class="hero-slide"        style="background-image:url('images/hero/slide-2.jpg')"></div>
+            <div class="hero-slide"        style="background-image:url('images/hero/slide-3.jpg')"></div>
+            <div class="hero-slide"        style="background-image:url('images/hero/slide-4.jpg')"></div>
         </div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
@@ -89,84 +94,98 @@
         </div>
         <div class="masonry-grid" id="masonry-grid">
 
-            <!-- Portraits -->
+            <!--
+                PORTRAITS — save 6 photos as:
+                images/portraits/portrait-1.jpg through portrait-6.jpg
+                Recommended: portrait orientation (taller than wide)
+            -->
             <div class="photo-item" data-category="portraits">
-                <img src="https://picsum.photos/id/1005/600/800" alt="Portrait" loading="lazy">
+                <img src="images/portraits/portrait-1.jpg" alt="Portrait" loading="lazy">
             </div>
             <div class="photo-item" data-category="portraits">
-                <img src="https://picsum.photos/id/1010/600/750" alt="Portrait" loading="lazy">
+                <img src="images/portraits/portrait-2.jpg" alt="Portrait" loading="lazy">
             </div>
             <div class="photo-item" data-category="portraits">
-                <img src="https://picsum.photos/id/1025/600/900" alt="Portrait" loading="lazy">
+                <img src="images/portraits/portrait-3.jpg" alt="Portrait" loading="lazy">
             </div>
             <div class="photo-item" data-category="portraits">
-                <img src="https://picsum.photos/id/1027/600/780" alt="Portrait" loading="lazy">
+                <img src="images/portraits/portrait-4.jpg" alt="Portrait" loading="lazy">
             </div>
             <div class="photo-item" data-category="portraits">
-                <img src="https://picsum.photos/id/1062/600/750" alt="Portrait" loading="lazy">
+                <img src="images/portraits/portrait-5.jpg" alt="Portrait" loading="lazy">
             </div>
             <div class="photo-item" data-category="portraits">
-                <img src="https://picsum.photos/id/1074/600/850" alt="Portrait" loading="lazy">
+                <img src="images/portraits/portrait-6.jpg" alt="Portrait" loading="lazy">
             </div>
 
-            <!-- Landscapes -->
+            <!--
+                LANDSCAPES — save 6 photos as:
+                images/landscapes/landscape-1.jpg through landscape-6.jpg
+                Recommended: landscape orientation (wider than tall)
+            -->
             <div class="photo-item" data-category="landscapes">
-                <img src="https://picsum.photos/id/1011/800/550" alt="Landscape" loading="lazy">
+                <img src="images/landscapes/landscape-1.jpg" alt="Landscape" loading="lazy">
             </div>
             <div class="photo-item" data-category="landscapes">
-                <img src="https://picsum.photos/id/1015/800/500" alt="Landscape" loading="lazy">
+                <img src="images/landscapes/landscape-2.jpg" alt="Landscape" loading="lazy">
             </div>
             <div class="photo-item" data-category="landscapes">
-                <img src="https://picsum.photos/id/1018/800/550" alt="Landscape" loading="lazy">
+                <img src="images/landscapes/landscape-3.jpg" alt="Landscape" loading="lazy">
             </div>
             <div class="photo-item" data-category="landscapes">
-                <img src="https://picsum.photos/id/1033/800/550" alt="Landscape" loading="lazy">
+                <img src="images/landscapes/landscape-4.jpg" alt="Landscape" loading="lazy">
             </div>
             <div class="photo-item" data-category="landscapes">
-                <img src="https://picsum.photos/id/1043/800/500" alt="Landscape" loading="lazy">
+                <img src="images/landscapes/landscape-5.jpg" alt="Landscape" loading="lazy">
             </div>
             <div class="photo-item" data-category="landscapes">
-                <img src="https://picsum.photos/id/1048/800/530" alt="Landscape" loading="lazy">
+                <img src="images/landscapes/landscape-6.jpg" alt="Landscape" loading="lazy">
             </div>
 
-            <!-- Street -->
+            <!--
+                STREET — save 6 photos as:
+                images/street/street-1.jpg through street-6.jpg
+            -->
             <div class="photo-item" data-category="street">
-                <img src="https://picsum.photos/id/1035/600/750" alt="Street" loading="lazy">
+                <img src="images/street/street-1.jpg" alt="Street" loading="lazy">
             </div>
             <div class="photo-item" data-category="street">
-                <img src="https://picsum.photos/id/1041/800/600" alt="Street" loading="lazy">
+                <img src="images/street/street-2.jpg" alt="Street" loading="lazy">
             </div>
             <div class="photo-item" data-category="street">
-                <img src="https://picsum.photos/id/1050/600/800" alt="Street" loading="lazy">
+                <img src="images/street/street-3.jpg" alt="Street" loading="lazy">
             </div>
             <div class="photo-item" data-category="street">
-                <img src="https://picsum.photos/id/1055/800/550" alt="Street" loading="lazy">
+                <img src="images/street/street-4.jpg" alt="Street" loading="lazy">
             </div>
             <div class="photo-item" data-category="street">
-                <img src="https://picsum.photos/id/1066/600/700" alt="Street" loading="lazy">
+                <img src="images/street/street-5.jpg" alt="Street" loading="lazy">
             </div>
             <div class="photo-item" data-category="street">
-                <img src="https://picsum.photos/id/1071/700/600" alt="Street" loading="lazy">
+                <img src="images/street/street-6.jpg" alt="Street" loading="lazy">
             </div>
 
-            <!-- Events -->
+            <!--
+                EVENTS — save 6 photos as:
+                images/events/event-1.jpg through event-6.jpg
+            -->
             <div class="photo-item" data-category="events">
-                <img src="https://picsum.photos/id/1002/800/600" alt="Event" loading="lazy">
+                <img src="images/events/event-1.jpg" alt="Event" loading="lazy">
             </div>
             <div class="photo-item" data-category="events">
-                <img src="https://picsum.photos/id/1006/600/750" alt="Event" loading="lazy">
+                <img src="images/events/event-2.jpg" alt="Event" loading="lazy">
             </div>
             <div class="photo-item" data-category="events">
-                <img src="https://picsum.photos/id/1016/800/550" alt="Event" loading="lazy">
+                <img src="images/events/event-3.jpg" alt="Event" loading="lazy">
             </div>
             <div class="photo-item" data-category="events">
-                <img src="https://picsum.photos/id/1020/600/800" alt="Event" loading="lazy">
+                <img src="images/events/event-4.jpg" alt="Event" loading="lazy">
             </div>
             <div class="photo-item" data-category="events">
-                <img src="https://picsum.photos/id/1024/800/600" alt="Event" loading="lazy">
+                <img src="images/events/event-5.jpg" alt="Event" loading="lazy">
             </div>
             <div class="photo-item" data-category="events">
-                <img src="https://picsum.photos/id/1029/700/650" alt="Event" loading="lazy">
+                <img src="images/events/event-6.jpg" alt="Event" loading="lazy">
             </div>
 
         </div>
@@ -176,8 +195,12 @@
     </section>
 
     <section id="about">
+        <!--
+            ABOUT PHOTO — save as: images/about.jpg
+            Recommended: portrait orientation, at least 700px wide
+        -->
         <div class="about-image">
-            <img src="https://picsum.photos/id/1080/700/900" alt="Tim Chong">
+            <img src="images/about.jpg" alt="Tim Chong">
         </div>
         <div class="about-text">
             <h2>About</h2>
