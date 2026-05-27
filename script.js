@@ -151,15 +151,6 @@ photoItems.forEach((item, i) => {
     cap.textContent = item.dataset.category;
     item.appendChild(cap);
 
-    // Scroll reveal — first batch revealed via timeout, rest via observer
-    item.classList.add('reveal');
-    item.style.transitionDelay = `${(i % 3) * 80}ms`;
-    if (i < BATCH_SIZE) {
-        setTimeout(() => item.classList.add('visible'), 200 + (i % 3) * 80);
-    } else {
-        revealObserver.observe(item);
-    }
-
     // Keyboard accessibility
     item.setAttribute('tabindex', '0');
     item.setAttribute('role', 'button');
