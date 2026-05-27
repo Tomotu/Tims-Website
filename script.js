@@ -33,13 +33,10 @@ const formStatus       = document.getElementById('form-status');
 const copyrightYear    = document.getElementById('copyright-year');
 
 // ── Preloader ─────────────────────────────────────────────────────────────────
-// Use DOMContentLoaded + fixed delay so missing/slow images never block the UI
-document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-        preloader.classList.add('fade-out');
-        preloader.addEventListener('transitionend', () => preloader.remove(), { once: true });
-    }, 1400);
-});
+setTimeout(() => {
+    preloader.classList.add('fade-out');
+    preloader.addEventListener('transitionend', () => preloader.remove(), { once: true });
+}, 1400);
 
 // ── Copyright year ────────────────────────────────────────────────────────────
 if (copyrightYear) copyrightYear.textContent = new Date().getFullYear();
@@ -138,8 +135,12 @@ const revealObserver = new IntersectionObserver((entries) => {
 
 // ── Lazy-load fade-in ─────────────────────────────────────────────────────────
 document.querySelectorAll('.photo-item img').forEach(img => {
-    if (img.complete) img.classList.add('loaded');
-    else img.addEventListener('load', () => img.classList.add('loaded'));
+    if (img.complete) {
+        img.classList.add('loaded');
+    } else {
+        img.addEventListener('load',  () => img.classList.add('loaded'));
+        img.addEventListener('error', () => img.classList.add('loaded'));
+    }
 });
 
 // ── Hover caption & reveal setup ─────────────────────────────────────────────
@@ -150,10 +151,14 @@ photoItems.forEach((item, i) => {
     cap.textContent = item.dataset.category;
     item.appendChild(cap);
 
-    // Scroll reveal with column stagger
+    // Scroll reveal — first batch revealed via timeout, rest via observer
     item.classList.add('reveal');
     item.style.transitionDelay = `${(i % 3) * 80}ms`;
-    revealObserver.observe(item);
+    if (i < BATCH_SIZE) {
+        setTimeout(() => item.classList.add('visible'), 200 + (i % 3) * 80);
+    } else {
+        revealObserver.observe(item);
+    }
 
     // Keyboard accessibility
     item.setAttribute('tabindex', '0');
