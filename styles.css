@@ -1,18 +1,24 @@
 :root {
-    --bg: #0d0d0d;
-    --bg-2: #141414;
-    --border: #222;
-    --text: #e8e8e8;
-    --text-muted: #5a5a5a;
+    --bg: #1c1c1a;
+    --bg-2: #242422;
+    --border: #2e3229;
+    --text: #e6e1d6;
+    --text-muted: #787870;
     --gap: 6px;
+    --shimmer: #252521;
+    --nav-scrolled-bg: rgba(28, 28, 26, 0.93);
+    --accent: #a0453f;
+    --accent-2: #5a6a49;
 }
 
 body.light-mode {
-    --bg: #f7f6f3;
-    --bg-2: #eeede9;
-    --border: #dddbd4;
-    --text: #1a1a1a;
-    --text-muted: #888;
+    --bg: #e6e1d6;
+    --bg-2: #d9d3c4;
+    --border: #c6bfaf;
+    --text: #1c1c1a;
+    --text-muted: #5a6a49;
+    --shimmer: #cfc8b8;
+    --nav-scrolled-bg: rgba(230, 225, 214, 0.94);
 }
 
 *, *::before, *::after {
@@ -32,10 +38,10 @@ html {
     left: 0;
     height: 2px;
     width: 0%;
-    background: var(--text);
+    background: var(--accent);
     z-index: 9998;
     transition: width 0.1s linear;
-    opacity: 0.5;
+    opacity: 0.9;
 }
 
 body {
@@ -79,6 +85,11 @@ body {
     to   { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes shimmer {
+    from { background-position: -200% 0; }
+    to   { background-position:  200% 0; }
+}
+
 /* ── Nav ── */
 #navbar {
     position: fixed;
@@ -95,7 +106,7 @@ body {
 }
 
 #navbar.scrolled {
-    background: rgba(13, 13, 13, 0.92);
+    background: var(--nav-scrolled-bg);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     padding: 18px 48px;
@@ -224,6 +235,7 @@ body {
     opacity: 0;
     transform: scale(1.06);
     transition: opacity 1.6s ease, transform 6s ease;
+    will-change: opacity, transform;
 }
 
 .hero-slide.active {
@@ -234,7 +246,7 @@ body {
 .hero-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.52);
+    background: linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.5) 55%, rgba(0,0,0,0.68) 100%);
     z-index: 1;
 }
 
@@ -326,7 +338,7 @@ body {
 }
 
 .filter-btn:hover {
-    border-color: #444;
+    border-color: var(--accent-2);
     color: var(--text);
 }
 
@@ -341,9 +353,9 @@ body {
 }
 
 .filter-btn.active {
-    background: var(--text);
-    border-color: var(--text);
-    color: var(--bg);
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #f0ece4;
 }
 
 /* ── Masonry Grid ── */
@@ -358,8 +370,15 @@ body {
     overflow: hidden;
     cursor: pointer;
     position: relative;
-    background: var(--bg-2);
+    background: linear-gradient(90deg, var(--bg-2) 25%, var(--shimmer) 50%, var(--bg-2) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
     touch-action: manipulation;
+}
+
+.photo-item.img-loaded {
+    background: var(--bg-2);
+    animation: none;
 }
 
 @media (hover: none) {
@@ -402,7 +421,7 @@ body {
 }
 
 .photo-item:focus-visible {
-    outline: 2px solid rgba(232, 232, 232, 0.6);
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
 }
 
@@ -540,12 +559,12 @@ body {
 
 .form-group input:focus,
 .form-group textarea:focus {
-    border-color: #444;
+    border-color: var(--accent-2);
 }
 
 .form-submit {
-    background: var(--text);
-    color: var(--bg);
+    background: var(--accent);
+    color: #f0ece4;
     border: none;
     padding: 13px 36px;
     font-family: 'Inter', sans-serif;
@@ -618,7 +637,7 @@ footer {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(5, 5, 5, 0.96);
+    background: rgba(20, 20, 18, 0.97);
     z-index: 1000;
     align-items: center;
     justify-content: center;
@@ -634,13 +653,6 @@ footer {
     justify-content: center;
     max-width: 90vw;
     max-height: 90vh;
-}
-
-#lightbox-img {
-    max-width: 90vw;
-    max-height: 90vh;
-    object-fit: contain;
-    display: block;
 }
 
 .lightbox-close {
@@ -687,6 +699,19 @@ footer {
 .lightbox-prev { left: 16px; }
 .lightbox-next { right: 16px; }
 
+.lightbox-caption {
+    position: absolute;
+    bottom: 48px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    user-select: none;
+    white-space: nowrap;
+}
+
 .lightbox-counter {
     position: absolute;
     bottom: 24px;
@@ -724,29 +749,6 @@ footer {
     color: var(--text-muted);
 }
 
-/* ── Load more ── */
-.load-more-wrap {
-    display: flex;
-    justify-content: center;
-    padding: 48px 0 0;
-}
-.load-more-btn {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    padding: 12px 40px;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.72rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    cursor: pointer;
-    border-radius: 2px;
-    transition: border-color 0.2s, color 0.2s;
-}
-.load-more-btn:hover {
-    border-color: var(--text-muted);
-    color: var(--text);
-}
 
 /* ── Photo hover caption ── */
 .photo-cat {
@@ -764,14 +766,14 @@ footer {
 }
 .photo-item:hover .photo-cat { opacity: 1; }
 
-/* ── Lightbox zoom ── */
+/* ── Lightbox image ── */
 #lightbox-img {
     max-width: 90vw;
     max-height: 90vh;
     object-fit: contain;
     display: block;
     cursor: zoom-in;
-    transition: transform 0.35s ease;
+    transition: transform 0.35s ease, opacity 0.2s ease;
 }
 #lightbox-img.zoomed {
     transform: scale(1.9);
@@ -903,10 +905,37 @@ footer {
     }
 }
 
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+    .photo-item {
+        animation: none;
+        background: var(--bg-2);
+    }
+    .hero-slide {
+        transition: opacity 0.3s ease;
+        transform: none !important;
+        will-change: auto;
+    }
+    .preloader-name {
+        animation: none;
+        opacity: 1;
+    }
+    .scroll-indicator {
+        animation: none;
+    }
+    #lightbox-img {
+        transition: none;
+    }
+    .reveal {
+        transition: opacity 0.3s ease;
+        transform: none;
+    }
+}
+
 /* ── Print ── */
 @media print {
     #navbar, #preloader, #scroll-progress, #back-to-top,
-    .filters, .load-more-wrap, .lightbox, footer { display: none !important; }
+    .filters, .lightbox, footer { display: none !important; }
 
     body { background: #fff; color: #000; }
 

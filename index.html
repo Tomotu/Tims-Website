@@ -4,27 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tim Chong — Photography</title>
+    <script>if (history.scrollRestoration) history.scrollRestoration = 'manual';</script>
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230d0d0d'/%3E%3Ctext x='16' y='20' font-size='16' font-weight='bold' fill='%23fff' text-anchor='middle'%3EC%3C/text%3E%3C/svg%3E">
 
     <!-- SEO -->
-    <meta name="description" content="Photography by Tim Chong — portraits, landscapes, street, and events.">
+    <meta name="description" content="Photography by Tim Chong — portraits, landscapes, sports, and events.">
     <meta name="author" content="Tim Chong">
     <link rel="canonical" href="https://tomotu.github.io/Tims-Website/">
+    <link rel="preload" as="image" href="images/hero/SBD-Cup2025-7.jpg">
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://tomotu.github.io/Tims-Website/">
     <meta property="og:title" content="Tim Chong — Photography">
-    <meta property="og:description" content="Photography by Tim Chong — portraits, landscapes, street, and events.">
+    <meta property="og:description" content="Photography by Tim Chong — portraits, landscapes, sports, and events.">
     <meta property="og:image" content="https://tomotu.github.io/Tims-Website/images/og-preview.jpg">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Tim Chong — Photography">
-    <meta name="twitter:description" content="Photography by Tim Chong — portraits, landscapes, street, and events.">
+    <meta name="twitter:description" content="Photography by Tim Chong — portraits, landscapes, sports, and events.">
     <meta name="twitter:image" content="https://tomotu.github.io/Tims-Website/images/og-preview.jpg">
+
+    <meta name="theme-color" content="#1c1c1a">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Tim Chong",
+      "jobTitle": "Photographer",
+      "url": "https://tomotu.github.io/Tims-Website/"
+    }
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -169,9 +183,6 @@
             </div>
 
         </div>
-        <div class="load-more-wrap">
-            <button id="load-more-btn" class="load-more-btn">Load More</button>
-        </div>
     </section>
 
     <section id="about">
@@ -239,6 +250,7 @@
         <div class="lightbox-img-container">
             <img id="lightbox-img" src="" alt="" title="Click to zoom">
         </div>
+        <div class="lightbox-caption" id="lightbox-caption"></div>
         <div class="lightbox-counter" id="lightbox-counter"></div>
         <a id="lightbox-download" class="lightbox-download" href="#" download target="_blank" rel="noopener" aria-label="Download photo">↓</a>
     </div>

@@ -1,17 +1,22 @@
 'use strict';
 
-// Always start at top of page, never restore a mid-page scroll position
+// scrollRestoration is also set inline in <head> so it takes effect before
+// the browser can apply its saved position. Here we strip any #hash and force
+// top instantly; the setTimeout(0) fires as a new task after any browser-queued
+// anchor-scroll, overriding it.
 if (history.scrollRestoration) history.scrollRestoration = 'manual';
-window.scrollTo(0, 0);
+if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+setTimeout(() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' }), 0);
 
 // ── Constants & state ────────────────────────────────────────────────────────
-const BATCH_SIZE = 12;
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let currentCategory = 'all';
-let loadedAll = false;
 let currentLbIndex = 0;
 let lastFocusedItem = null;
 let filterTimeout = null;
 let touchStartX = 0;
+let navigating = false;
 
 // ── DOM refs ─────────────────────────────────────────────────────────────────
 const preloader = document.getElementById('preloader');
@@ -24,7 +29,7 @@ const navLinks = document.querySelectorAll('.nav-links a');
 const photoItems = document.querySelectorAll('.photo-item');
 const filterBtns = document.querySelectorAll('.filter-btn');
 const photoCountEl = document.getElementById('photo-count');
-const loadMoreBtn = document.getElementById('load-more-btn');
+const lightboxCaption = document.getElementById('lightbox-caption');
 const backToTop = document.getElementById('back-to-top');
 const lightbox = document.getElementById('lightbox');
 const lightboxImg = document.getElementById('lightbox-img');
@@ -63,6 +68,8 @@ function setTheme(light) {
     themeToggle.textContent = light ? '○' : '◑';
     themeToggle.setAttribute('aria-label', light ? 'Switch to dark mode' : 'Switch to light mode');
     localStorage.setItem('theme', light ? 'light' : 'dark');
+    const tcMeta = document.querySelector('meta[name="theme-color"]');
+    if (tcMeta) tcMeta.content = light ? '#e6e1d6' : '#1c1c1a';
 }
 setTheme(localStorage.getItem('theme') === 'light');
 themeToggle.addEventListener('click', () => setTheme(!document.body.classList.contains('light-mode')));
@@ -78,16 +85,20 @@ setInterval(() => {
 // ── Hero tagline typewriter ──────────────────────────────────────────────────
 const taglineText = tagline.textContent;
 tagline.textContent = '';
-let charIndex = 0;
-setTimeout(() => {
-    const type = () => {
-        if (charIndex < taglineText.length) {
-            tagline.textContent += taglineText[charIndex++];
-            setTimeout(type, 90);
-        }
-    };
-    type();
-}, 800);
+if (prefersReducedMotion) {
+    tagline.textContent = taglineText;
+} else {
+    let charIndex = 0;
+    setTimeout(() => {
+        const type = () => {
+            if (charIndex < taglineText.length) {
+                tagline.textContent += taglineText[charIndex++];
+                setTimeout(type, 90);
+            }
+        };
+        type();
+    }, 800);
+}
 
 // ── Mobile menu ──────────────────────────────────────────────────────────────
 function toggleMenu(open) {
@@ -99,6 +110,20 @@ function toggleMenu(open) {
 }
 hamburger.addEventListener('click', () => toggleMenu(!hamburger.classList.contains('open')));
 document.querySelectorAll('.mobile-link').forEach(l => l.addEventListener('click', () => toggleMenu(false)));
+
+// ── Anchor navigation — no URL hash ─────────────────────────────────────────
+// Intercept every #anchor click and use scrollIntoView instead. This prevents
+// the browser from ever storing a hash in the URL, which it would then try to
+// scroll to on the next page load — bypassing all our scroll-to-top fixes.
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+    const id = link.getAttribute('href');
+    if (id === '#') return;
+    link.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(id);
+        if (target) target.scrollIntoView({ behavior: prefersReducedMotion ? 'instant' : 'smooth' });
+    });
+});
 
 // ── Active nav section ───────────────────────────────────────────────────────
 const sectionObserver = new IntersectionObserver((entries) => {
@@ -126,15 +151,17 @@ const revealObserver = new IntersectionObserver((entries) => {
     document.querySelectorAll(sel).forEach(el => { el.classList.add('reveal'); revealObserver.observe(el); });
 });
 
-// ── Lazy-load fade-in ────────────────────────────────────────────────────────
+// ── Lazy-load fade-in + shimmer removal ─────────────────────────────────────
 photoItems.forEach(item => {
     const img = item.querySelector('img');
     if (img) {
+        img.decoding = 'async';
+        const markLoaded = () => { img.classList.add('loaded'); item.classList.add('img-loaded'); };
         if (img.complete) {
-            img.classList.add('loaded');
+            markLoaded();
         } else {
-            img.addEventListener('load', () => img.classList.add('loaded'));
-            img.addEventListener('error', () => img.classList.add('loaded'));
+            img.addEventListener('load', markLoaded);
+            img.addEventListener('error', markLoaded);
         }
     }
 });
@@ -168,26 +195,7 @@ function updatePhotoCount() {
     const n = [...photoItems].filter(item => !item.classList.contains('hidden')).length;
     photoCountEl.textContent = `${n} photo${n !== 1 ? 's' : ''}`;
 }
-
-// ── Load more ────────────────────────────────────────────────────────────────
-photoItems.forEach((item, i) => {
-    item.dataset.index = i;
-    if (i >= BATCH_SIZE) item.classList.add('hidden');
-});
 updatePhotoCount();
-
-if (loadMoreBtn) {
-    loadMoreBtn.addEventListener('click', () => {
-        loadedAll = true;
-        photoItems.forEach(item => {
-            if (currentCategory === 'all' || item.dataset.category === currentCategory) {
-                item.classList.remove('hidden');
-            }
-        });
-        loadMoreBtn.style.display = 'none';
-        updatePhotoCount();
-    });
-}
 
 // ── Photo count badges on filter buttons ─────────────────────────────────────
 filterBtns.forEach(btn => {
@@ -210,9 +218,7 @@ filterBtns.forEach(btn => {
         );
         const toShow = [...photoItems].filter(item => {
             if (!item.classList.contains('hidden')) return false;
-            const matchesCat = currentCategory === 'all' || item.dataset.category === currentCategory;
-            const blockedByBatch = !loadedAll && currentCategory === 'all' && parseInt(item.dataset.index) >= BATCH_SIZE;
-            return matchesCat && !blockedByBatch;
+            return currentCategory === 'all' || item.dataset.category === currentCategory;
         });
 
         toHide.forEach(item => {
@@ -230,9 +236,6 @@ filterBtns.forEach(btn => {
                     setTimeout(() => { item.style.cssText = ''; }, 300);
                 }));
             });
-            if (loadMoreBtn) {
-                loadMoreBtn.style.display = (!loadedAll && currentCategory === 'all') ? '' : 'none';
-            }
             updatePhotoCount();
         }, 200);
     });
@@ -256,12 +259,22 @@ function updateCounter() {
     lightboxCounter.textContent = `${currentLbIndex + 1} / ${visible.length}`;
 }
 
+function setCaption(item) {
+    if (!lightboxCaption) return;
+    const cat = item.dataset.category || '';
+    lightboxCaption.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+}
+
 function openLightbox(index) {
     const visible = getVisible();
     currentLbIndex = index;
-    lightboxImg.src = visible[currentLbIndex].querySelector('img').src;
+    const item = visible[currentLbIndex];
+    lightboxImg.style.opacity = '';
+    navigating = false;
+    lightboxImg.src = item.querySelector('img').src;
     lightboxImg.classList.remove('zoomed');
     if (lightboxDownload) lightboxDownload.href = lightboxImg.src;
+    setCaption(item);
     lightbox.classList.add('active');
     document.body.style.overflow = 'hidden';
     updateCounter();
@@ -276,13 +289,21 @@ function closeLightbox() {
 }
 
 function navigate(dir) {
-    const visible = getVisible();
-    currentLbIndex = (currentLbIndex + dir + visible.length) % visible.length;
-    lightboxImg.classList.remove('zoomed');
-    lightboxImg.src = visible[currentLbIndex].querySelector('img').src;
-    if (lightboxDownload) lightboxDownload.href = lightboxImg.src;
-    updateCounter();
-    preloadAdjacent(currentLbIndex);
+    if (navigating) return;
+    navigating = true;
+    lightboxImg.style.opacity = '0';
+    setTimeout(() => {
+        const visible = getVisible();
+        currentLbIndex = (currentLbIndex + dir + visible.length) % visible.length;
+        lightboxImg.classList.remove('zoomed');
+        const item = visible[currentLbIndex];
+        lightboxImg.src = item.querySelector('img').src;
+        if (lightboxDownload) lightboxDownload.href = lightboxImg.src;
+        setCaption(item);
+        updateCounter();
+        preloadAdjacent(currentLbIndex);
+        requestAnimationFrame(() => { lightboxImg.style.opacity = ''; navigating = false; });
+    }, 200);
 }
 
 lightboxImg.addEventListener('click', () => lightboxImg.classList.toggle('zoomed'));
