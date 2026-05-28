@@ -37,14 +37,10 @@ const formStatus = document.getElementById('form-status');
 const copyrightYear = document.getElementById('copyright-year');
 
 // ── Preloader ────────────────────────────────────────────────────────────────
-window.addEventListener('load', () => {
-    setTimeout(() => {
-        preloader.classList.add('fade-out');
-        preloader.addEventListener('transitionend', () => {
-            if (preloader.parentNode) preloader.remove();
-        }, { once: true });
-    }, 500);
-});
+setTimeout(() => {
+    preloader.classList.add('fade-out');
+    preloader.addEventListener('transitionend', () => preloader.remove(), { once: true });
+}, 1200);
 
 // ── Copyright year ───────────────────────────────────────────────────────────
 if (copyrightYear) copyrightYear.textContent = new Date().getFullYear();
