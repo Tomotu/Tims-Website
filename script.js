@@ -1,13 +1,19 @@
 'use strict';
 
-// scrollRestoration is also set inline in <head> so it takes effect before
-// the browser can apply its saved position. Here we strip any #hash and force
-// top instantly; the setTimeout(0) fires as a new task after any browser-queued
-// anchor-scroll, overriding it.
+// Force page to top on every load. Three layers:
+// 1. <head> inline script already set scrollRestoration='manual'
+// 2. replaceState removes any #hash so the browser has no anchor target
+// 3. scroll listener snaps back to top for 1.3s — catches browsers that fire
+//    their anchor-scroll after setTimeout(0). The preloader covers the page
+//    for 1.2s so the snap is invisible to the user.
 if (history.scrollRestoration) history.scrollRestoration = 'manual';
 if (location.hash) history.replaceState(null, '', location.pathname + location.search);
 window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-setTimeout(() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' }), 0);
+let scrollUnlocked = false;
+window.addEventListener('scroll', () => {
+    if (!scrollUnlocked) window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+}, { passive: true });
+setTimeout(() => { scrollUnlocked = true; }, 1300);
 
 // ── Constants & state ────────────────────────────────────────────────────────
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
