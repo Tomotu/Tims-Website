@@ -1,10 +1,13 @@
 'use strict';
 
-// Always start at top of page — instant scroll bypasses CSS smooth-scroll,
-// replaceState strips any #hash so the browser doesn't auto-scroll to an anchor
+// scrollRestoration is also set inline in <head> so it takes effect before
+// the browser can apply its saved position. Here we strip any #hash and force
+// top instantly; the setTimeout(0) fires as a new task after any browser-queued
+// anchor-scroll, overriding it.
 if (history.scrollRestoration) history.scrollRestoration = 'manual';
 if (location.hash) history.replaceState(null, '', location.pathname + location.search);
 window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+setTimeout(() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' }), 0);
 
 // ── Constants & state ────────────────────────────────────────────────────────
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
