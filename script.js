@@ -4,48 +4,52 @@
 if (history.scrollRestoration) history.scrollRestoration = 'manual';
 window.scrollTo(0, 0);
 
-// ── Constants & state ─────────────────────────────────────────────────────────
+// ── Constants & state ────────────────────────────────────────────────────────
 const BATCH_SIZE = 12;
-let currentCategory  = 'all';
-let loadedAll        = false;
-let currentLbIndex   = 0;
-let lastFocusedItem  = null;
-let filterTimeout    = null;
-let touchStartX      = 0;
+let currentCategory = 'all';
+let loadedAll = false;
+let currentLbIndex = 0;
+let lastFocusedItem = null;
+let filterTimeout = null;
+let touchStartX = 0;
 
-// ── DOM refs ──────────────────────────────────────────────────────────────────
-const preloader        = document.getElementById('preloader');
-const scrollProgress   = document.getElementById('scroll-progress');
-const navbar           = document.getElementById('navbar');
-const hamburger        = document.getElementById('hamburger');
-const mobileMenu       = document.getElementById('mobile-menu');
-const themeToggle      = document.getElementById('theme-toggle');
-const navLinks         = document.querySelectorAll('.nav-links a');
-const photoItems       = document.querySelectorAll('.photo-item');
-const filterBtns       = document.querySelectorAll('.filter-btn');
-const photoCountEl     = document.getElementById('photo-count');
-const loadMoreBtn      = document.getElementById('load-more-btn');
-const backToTop        = document.getElementById('back-to-top');
-const lightbox         = document.getElementById('lightbox');
-const lightboxImg      = document.getElementById('lightbox-img');
-const lightboxCounter  = document.getElementById('lightbox-counter');
+// ── DOM refs ─────────────────────────────────────────────────────────────────
+const preloader = document.getElementById('preloader');
+const scrollProgress = document.getElementById('scroll-progress');
+const navbar = document.getElementById('navbar');
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobile-menu');
+const themeToggle = document.getElementById('theme-toggle');
+const navLinks = document.querySelectorAll('.nav-links a');
+const photoItems = document.querySelectorAll('.photo-item');
+const filterBtns = document.querySelectorAll('.filter-btn');
+const photoCountEl = document.getElementById('photo-count');
+const loadMoreBtn = document.getElementById('load-more-btn');
+const backToTop = document.getElementById('back-to-top');
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightbox-img');
+const lightboxCounter = document.getElementById('lightbox-counter');
 const lightboxDownload = document.getElementById('lightbox-download');
-const heroSlides       = document.querySelectorAll('.hero-slide');
-const tagline          = document.querySelector('.hero-tagline');
-const contactForm      = document.getElementById('contact-form');
-const formStatus       = document.getElementById('form-status');
-const copyrightYear    = document.getElementById('copyright-year');
+const heroSlides = document.querySelectorAll('.hero-slide');
+const tagline = document.querySelector('.hero-tagline');
+const contactForm = document.getElementById('contact-form');
+const formStatus = document.getElementById('form-status');
+const copyrightYear = document.getElementById('copyright-year');
 
-// ── Preloader ─────────────────────────────────────────────────────────────────
-setTimeout(() => {
-    preloader.classList.add('fade-out');
-    preloader.addEventListener('transitionend', () => preloader.remove(), { once: true });
-}, 1400);
+// ── Preloader ────────────────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        preloader.classList.add('fade-out');
+        preloader.addEventListener('transitionend', () => {
+            if (preloader.parentNode) preloader.remove();
+        }, { once: true });
+    }, 500);
+});
 
-// ── Copyright year ────────────────────────────────────────────────────────────
+// ── Copyright year ───────────────────────────────────────────────────────────
 if (copyrightYear) copyrightYear.textContent = new Date().getFullYear();
 
-// ── Scroll events ─────────────────────────────────────────────────────────────
+// ── Scroll events ────────────────────────────────────────────────────────────
 window.addEventListener('scroll', () => {
     navbar.classList.toggle('scrolled', window.scrollY > 60);
     backToTop.classList.toggle('visible', window.scrollY > 400);
@@ -54,21 +58,10 @@ window.addEventListener('scroll', () => {
     if (scrollProgress) scrollProgress.style.width = `${(window.scrollY / scrollable) * 100}%`;
 }, { passive: true });
 
-// ── Smooth scroll with nav offset ────────────────────────────────────────────
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', e => {
-        const target = document.querySelector(anchor.getAttribute('href'));
-        if (!target) return;
-        e.preventDefault();
-        const top = target.getBoundingClientRect().top + window.scrollY - (navbar.offsetHeight + 16);
-        window.scrollTo({ top, behavior: 'smooth' });
-    });
-});
-
-// ── Back to top ───────────────────────────────────────────────────────────────
+// ── Back to top ──────────────────────────────────────────────────────────────
 backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-// ── Theme toggle ──────────────────────────────────────────────────────────────
+// ── Theme toggle ─────────────────────────────────────────────────────────────
 function setTheme(light) {
     document.body.classList.toggle('light-mode', light);
     themeToggle.textContent = light ? '○' : '◑';
@@ -78,7 +71,7 @@ function setTheme(light) {
 setTheme(localStorage.getItem('theme') === 'light');
 themeToggle.addEventListener('click', () => setTheme(!document.body.classList.contains('light-mode')));
 
-// ── Hero slideshow ────────────────────────────────────────────────────────────
+// ── Hero slideshow ───────────────────────────────────────────────────────────
 let currentSlide = 0;
 setInterval(() => {
     heroSlides[currentSlide].classList.remove('active');
@@ -86,7 +79,7 @@ setInterval(() => {
     heroSlides[currentSlide].classList.add('active');
 }, 5000);
 
-// ── Hero tagline typewriter ───────────────────────────────────────────────────
+// ── Hero tagline typewriter ──────────────────────────────────────────────────
 const taglineText = tagline.textContent;
 tagline.textContent = '';
 let charIndex = 0;
@@ -100,7 +93,7 @@ setTimeout(() => {
     type();
 }, 800);
 
-// ── Mobile menu ───────────────────────────────────────────────────────────────
+// ── Mobile menu ──────────────────────────────────────────────────────────────
 function toggleMenu(open) {
     hamburger.classList.toggle('open', open);
     hamburger.setAttribute('aria-expanded', open);
@@ -111,7 +104,7 @@ function toggleMenu(open) {
 hamburger.addEventListener('click', () => toggleMenu(!hamburger.classList.contains('open')));
 document.querySelectorAll('.mobile-link').forEach(l => l.addEventListener('click', () => toggleMenu(false)));
 
-// ── Active nav section ────────────────────────────────────────────────────────
+// ── Active nav section ───────────────────────────────────────────────────────
 const sectionObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -121,7 +114,7 @@ const sectionObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.3 });
 document.querySelectorAll('#gallery, #about, #contact').forEach(s => sectionObserver.observe(s));
 
-// ── Scroll reveal ─────────────────────────────────────────────────────────────
+// ── Scroll reveal ───────────────────────────────────���────────────────────────
 const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -137,13 +130,16 @@ const revealObserver = new IntersectionObserver((entries) => {
     document.querySelectorAll(sel).forEach(el => { el.classList.add('reveal'); revealObserver.observe(el); });
 });
 
-// ── Lazy-load fade-in ─────────────────────────────────────────────────────────
-document.querySelectorAll('.photo-item img').forEach(img => {
-    if (img.complete) {
-        img.classList.add('loaded');
-    } else {
-        img.addEventListener('load',  () => img.classList.add('loaded'));
-        img.addEventListener('error', () => img.classList.add('loaded'));
+// ── Lazy-load fade-in ────────────────────────────────────────────────────────
+photoItems.forEach(item => {
+    const img = item.querySelector('img');
+    if (img) {
+        if (img.complete) {
+            img.classList.add('loaded');
+        } else {
+            img.addEventListener('load', () => img.classList.add('loaded'));
+            img.addEventListener('error', () => img.classList.add('loaded'));
+        }
     }
 });
 
@@ -170,14 +166,14 @@ photoItems.forEach((item, i) => {
     });
 });
 
-// ── Gallery photo count ───────────────────────────────────────────────────────
+// ── Gallery photo count ──────────────────────────────────────────────────────
 function updatePhotoCount() {
     if (!photoCountEl) return;
     const n = [...photoItems].filter(item => !item.classList.contains('hidden')).length;
     photoCountEl.textContent = `${n} photo${n !== 1 ? 's' : ''}`;
 }
 
-// ── Load more ─────────────────────────────────────────────────────────────────
+// ── Load more ────────────────────────────────────────────────────────────────
 photoItems.forEach((item, i) => {
     item.dataset.index = i;
     if (i >= BATCH_SIZE) item.classList.add('hidden');
@@ -204,7 +200,7 @@ filterBtns.forEach(btn => {
     btn.innerHTML = `${btn.textContent} <span class="filter-count">${n}</span>`;
 });
 
-// ── Category filtering ────────────────────────────────────────────────────────
+// ── Category filtering ───────────────────────────────────────────────────────
 filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
         currentCategory = btn.dataset.category;
@@ -246,7 +242,7 @@ filterBtns.forEach(btn => {
     });
 });
 
-// ── Lightbox ──────────────────────────────────────────────────────────────────
+// ── Lightbox ─────────────────────────────────────────────────────────────────
 function getVisible() {
     return [...photoItems].filter(item => !item.classList.contains('hidden'));
 }
@@ -312,7 +308,7 @@ document.addEventListener('keydown', e => {
     if (e.key === 'ArrowLeft') navigate(-1);
 });
 
-// ── Contact form ──────────────────────────────────────────────────────────────
+// ── Contact form ─────────────────────────────────────────────────────────────
 contactForm.addEventListener('submit', async e => {
     e.preventDefault();
     const btn = contactForm.querySelector('.form-submit');
