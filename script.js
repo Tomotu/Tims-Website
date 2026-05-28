@@ -5,9 +5,7 @@ if (history.scrollRestoration) history.scrollRestoration = 'manual';
 window.scrollTo(0, 0);
 
 // ── Constants & state ────────────────────────────────────────────────────────
-const BATCH_SIZE = 12;
 let currentCategory = 'all';
-let loadedAll = false;
 let currentLbIndex = 0;
 let lastFocusedItem = null;
 let filterTimeout = null;
@@ -24,7 +22,7 @@ const navLinks = document.querySelectorAll('.nav-links a');
 const photoItems = document.querySelectorAll('.photo-item');
 const filterBtns = document.querySelectorAll('.filter-btn');
 const photoCountEl = document.getElementById('photo-count');
-const loadMoreBtn = document.getElementById('load-more-btn');
+const lightboxCaption = document.getElementById('lightbox-caption');
 const backToTop = document.getElementById('back-to-top');
 const lightbox = document.getElementById('lightbox');
 const lightboxImg = document.getElementById('lightbox-img');
@@ -126,15 +124,16 @@ const revealObserver = new IntersectionObserver((entries) => {
     document.querySelectorAll(sel).forEach(el => { el.classList.add('reveal'); revealObserver.observe(el); });
 });
 
-// ── Lazy-load fade-in ────────────────────────────────────────────────────────
+// ── Lazy-load fade-in + shimmer removal ─────────────────────────────────────
 photoItems.forEach(item => {
     const img = item.querySelector('img');
     if (img) {
+        const markLoaded = () => { img.classList.add('loaded'); item.classList.add('img-loaded'); };
         if (img.complete) {
-            img.classList.add('loaded');
+            markLoaded();
         } else {
-            img.addEventListener('load', () => img.classList.add('loaded'));
-            img.addEventListener('error', () => img.classList.add('loaded'));
+            img.addEventListener('load', markLoaded);
+            img.addEventListener('error', markLoaded);
         }
     }
 });
@@ -168,26 +167,7 @@ function updatePhotoCount() {
     const n = [...photoItems].filter(item => !item.classList.contains('hidden')).length;
     photoCountEl.textContent = `${n} photo${n !== 1 ? 's' : ''}`;
 }
-
-// ── Load more ────────────────────────────────────────────────────────────────
-photoItems.forEach((item, i) => {
-    item.dataset.index = i;
-    if (i >= BATCH_SIZE) item.classList.add('hidden');
-});
 updatePhotoCount();
-
-if (loadMoreBtn) {
-    loadMoreBtn.addEventListener('click', () => {
-        loadedAll = true;
-        photoItems.forEach(item => {
-            if (currentCategory === 'all' || item.dataset.category === currentCategory) {
-                item.classList.remove('hidden');
-            }
-        });
-        loadMoreBtn.style.display = 'none';
-        updatePhotoCount();
-    });
-}
 
 // ── Photo count badges on filter buttons ─────────────────────────────────────
 filterBtns.forEach(btn => {
@@ -210,9 +190,7 @@ filterBtns.forEach(btn => {
         );
         const toShow = [...photoItems].filter(item => {
             if (!item.classList.contains('hidden')) return false;
-            const matchesCat = currentCategory === 'all' || item.dataset.category === currentCategory;
-            const blockedByBatch = !loadedAll && currentCategory === 'all' && parseInt(item.dataset.index) >= BATCH_SIZE;
-            return matchesCat && !blockedByBatch;
+            return currentCategory === 'all' || item.dataset.category === currentCategory;
         });
 
         toHide.forEach(item => {
@@ -230,9 +208,6 @@ filterBtns.forEach(btn => {
                     setTimeout(() => { item.style.cssText = ''; }, 300);
                 }));
             });
-            if (loadMoreBtn) {
-                loadMoreBtn.style.display = (!loadedAll && currentCategory === 'all') ? '' : 'none';
-            }
             updatePhotoCount();
         }, 200);
     });
@@ -256,12 +231,20 @@ function updateCounter() {
     lightboxCounter.textContent = `${currentLbIndex + 1} / ${visible.length}`;
 }
 
+function setCaption(item) {
+    if (!lightboxCaption) return;
+    const cat = item.dataset.category || '';
+    lightboxCaption.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+}
+
 function openLightbox(index) {
     const visible = getVisible();
     currentLbIndex = index;
-    lightboxImg.src = visible[currentLbIndex].querySelector('img').src;
+    const item = visible[currentLbIndex];
+    lightboxImg.src = item.querySelector('img').src;
     lightboxImg.classList.remove('zoomed');
     if (lightboxDownload) lightboxDownload.href = lightboxImg.src;
+    setCaption(item);
     lightbox.classList.add('active');
     document.body.style.overflow = 'hidden';
     updateCounter();
@@ -279,8 +262,10 @@ function navigate(dir) {
     const visible = getVisible();
     currentLbIndex = (currentLbIndex + dir + visible.length) % visible.length;
     lightboxImg.classList.remove('zoomed');
-    lightboxImg.src = visible[currentLbIndex].querySelector('img').src;
+    const item = visible[currentLbIndex];
+    lightboxImg.src = item.querySelector('img').src;
     if (lightboxDownload) lightboxDownload.href = lightboxImg.src;
+    setCaption(item);
     updateCounter();
     preloadAdjacent(currentLbIndex);
 }

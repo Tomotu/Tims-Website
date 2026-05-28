@@ -5,6 +5,7 @@
     --text: #e8e8e8;
     --text-muted: #5a5a5a;
     --gap: 6px;
+    --shimmer: #1d1d1d;
 }
 
 body.light-mode {
@@ -13,6 +14,7 @@ body.light-mode {
     --border: #dddbd4;
     --text: #1a1a1a;
     --text-muted: #888;
+    --shimmer: #e3e1dc;
 }
 
 *, *::before, *::after {
@@ -77,6 +79,11 @@ body {
 @keyframes preloaderReveal {
     from { opacity: 0; transform: translateY(12px); }
     to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+    from { background-position: -200% 0; }
+    to   { background-position:  200% 0; }
 }
 
 /* ── Nav ── */
@@ -358,8 +365,15 @@ body {
     overflow: hidden;
     cursor: pointer;
     position: relative;
-    background: var(--bg-2);
+    background: linear-gradient(90deg, var(--bg-2) 25%, var(--shimmer) 50%, var(--bg-2) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
     touch-action: manipulation;
+}
+
+.photo-item.img-loaded {
+    background: var(--bg-2);
+    animation: none;
 }
 
 @media (hover: none) {
@@ -687,6 +701,19 @@ footer {
 .lightbox-prev { left: 16px; }
 .lightbox-next { right: 16px; }
 
+.lightbox-caption {
+    position: absolute;
+    bottom: 48px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    user-select: none;
+    white-space: nowrap;
+}
+
 .lightbox-counter {
     position: absolute;
     bottom: 24px;
@@ -724,29 +751,6 @@ footer {
     color: var(--text-muted);
 }
 
-/* ── Load more ── */
-.load-more-wrap {
-    display: flex;
-    justify-content: center;
-    padding: 48px 0 0;
-}
-.load-more-btn {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    padding: 12px 40px;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.72rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    cursor: pointer;
-    border-radius: 2px;
-    transition: border-color 0.2s, color 0.2s;
-}
-.load-more-btn:hover {
-    border-color: var(--text-muted);
-    color: var(--text);
-}
 
 /* ── Photo hover caption ── */
 .photo-cat {
@@ -906,7 +910,7 @@ footer {
 /* ── Print ── */
 @media print {
     #navbar, #preloader, #scroll-progress, #back-to-top,
-    .filters, .load-more-wrap, .lightbox, footer { display: none !important; }
+    .filters, .lightbox, footer { display: none !important; }
 
     body { background: #fff; color: #000; }
 
