@@ -1,5 +1,9 @@
 'use strict';
 
+// Always start at top of page, never restore a mid-page scroll position
+if (history.scrollRestoration) history.scrollRestoration = 'manual';
+window.scrollTo(0, 0);
+
 // ── Constants & state ─────────────────────────────────────────────────────────
 const BATCH_SIZE = 12;
 let currentCategory  = 'all';
