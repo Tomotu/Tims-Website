@@ -6,6 +6,7 @@
     --text-muted: #5a5a5a;
     --gap: 6px;
     --shimmer: #1d1d1d;
+    --nav-scrolled-bg: rgba(13, 13, 13, 0.92);
 }
 
 body.light-mode {
@@ -15,6 +16,7 @@ body.light-mode {
     --text: #1a1a1a;
     --text-muted: #888;
     --shimmer: #e3e1dc;
+    --nav-scrolled-bg: rgba(247, 246, 243, 0.92);
 }
 
 *, *::before, *::after {
@@ -102,7 +104,7 @@ body {
 }
 
 #navbar.scrolled {
-    background: rgba(13, 13, 13, 0.92);
+    background: var(--nav-scrolled-bg);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     padding: 18px 48px;
@@ -231,6 +233,7 @@ body {
     opacity: 0;
     transform: scale(1.06);
     transition: opacity 1.6s ease, transform 6s ease;
+    will-change: opacity, transform;
 }
 
 .hero-slide.active {
@@ -241,7 +244,7 @@ body {
 .hero-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.52);
+    background: linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.5) 55%, rgba(0,0,0,0.68) 100%);
     z-index: 1;
 }
 
@@ -650,13 +653,6 @@ footer {
     max-height: 90vh;
 }
 
-#lightbox-img {
-    max-width: 90vw;
-    max-height: 90vh;
-    object-fit: contain;
-    display: block;
-}
-
 .lightbox-close {
     position: absolute;
     top: 24px;
@@ -768,14 +764,14 @@ footer {
 }
 .photo-item:hover .photo-cat { opacity: 1; }
 
-/* ── Lightbox zoom ── */
+/* ── Lightbox image ── */
 #lightbox-img {
     max-width: 90vw;
     max-height: 90vh;
     object-fit: contain;
     display: block;
     cursor: zoom-in;
-    transition: transform 0.35s ease;
+    transition: transform 0.35s ease, opacity 0.2s ease;
 }
 #lightbox-img.zoomed {
     transform: scale(1.9);
@@ -904,6 +900,33 @@ footer {
     .lightbox-next {
         font-size: 1.8rem;
         padding: 12px;
+    }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+    .photo-item {
+        animation: none;
+        background: var(--bg-2);
+    }
+    .hero-slide {
+        transition: opacity 0.3s ease;
+        transform: none !important;
+        will-change: auto;
+    }
+    .preloader-name {
+        animation: none;
+        opacity: 1;
+    }
+    .scroll-indicator {
+        animation: none;
+    }
+    #lightbox-img {
+        transition: none;
+    }
+    .reveal {
+        transition: opacity 0.3s ease;
+        transform: none;
     }
 }
 

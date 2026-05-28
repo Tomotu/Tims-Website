@@ -5,11 +5,13 @@ if (history.scrollRestoration) history.scrollRestoration = 'manual';
 window.scrollTo(0, 0);
 
 // ── Constants & state ────────────────────────────────────────────────────────
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let currentCategory = 'all';
 let currentLbIndex = 0;
 let lastFocusedItem = null;
 let filterTimeout = null;
 let touchStartX = 0;
+let navigating = false;
 
 // ── DOM refs ─────────────────────────────────────────────────────────────────
 const preloader = document.getElementById('preloader');
@@ -61,6 +63,8 @@ function setTheme(light) {
     themeToggle.textContent = light ? '○' : '◑';
     themeToggle.setAttribute('aria-label', light ? 'Switch to dark mode' : 'Switch to light mode');
     localStorage.setItem('theme', light ? 'light' : 'dark');
+    const tcMeta = document.querySelector('meta[name="theme-color"]');
+    if (tcMeta) tcMeta.content = light ? '#f7f6f3' : '#0d0d0d';
 }
 setTheme(localStorage.getItem('theme') === 'light');
 themeToggle.addEventListener('click', () => setTheme(!document.body.classList.contains('light-mode')));
@@ -76,16 +80,20 @@ setInterval(() => {
 // ── Hero tagline typewriter ──────────────────────────────────────────────────
 const taglineText = tagline.textContent;
 tagline.textContent = '';
-let charIndex = 0;
-setTimeout(() => {
-    const type = () => {
-        if (charIndex < taglineText.length) {
-            tagline.textContent += taglineText[charIndex++];
-            setTimeout(type, 90);
-        }
-    };
-    type();
-}, 800);
+if (prefersReducedMotion) {
+    tagline.textContent = taglineText;
+} else {
+    let charIndex = 0;
+    setTimeout(() => {
+        const type = () => {
+            if (charIndex < taglineText.length) {
+                tagline.textContent += taglineText[charIndex++];
+                setTimeout(type, 90);
+            }
+        };
+        type();
+    }, 800);
+}
 
 // ── Mobile menu ──────────────────────────────────────────────────────────────
 function toggleMenu(open) {
@@ -128,6 +136,7 @@ const revealObserver = new IntersectionObserver((entries) => {
 photoItems.forEach(item => {
     const img = item.querySelector('img');
     if (img) {
+        img.decoding = 'async';
         const markLoaded = () => { img.classList.add('loaded'); item.classList.add('img-loaded'); };
         if (img.complete) {
             markLoaded();
@@ -241,6 +250,8 @@ function openLightbox(index) {
     const visible = getVisible();
     currentLbIndex = index;
     const item = visible[currentLbIndex];
+    lightboxImg.style.opacity = '';
+    navigating = false;
     lightboxImg.src = item.querySelector('img').src;
     lightboxImg.classList.remove('zoomed');
     if (lightboxDownload) lightboxDownload.href = lightboxImg.src;
@@ -259,15 +270,21 @@ function closeLightbox() {
 }
 
 function navigate(dir) {
-    const visible = getVisible();
-    currentLbIndex = (currentLbIndex + dir + visible.length) % visible.length;
-    lightboxImg.classList.remove('zoomed');
-    const item = visible[currentLbIndex];
-    lightboxImg.src = item.querySelector('img').src;
-    if (lightboxDownload) lightboxDownload.href = lightboxImg.src;
-    setCaption(item);
-    updateCounter();
-    preloadAdjacent(currentLbIndex);
+    if (navigating) return;
+    navigating = true;
+    lightboxImg.style.opacity = '0';
+    setTimeout(() => {
+        const visible = getVisible();
+        currentLbIndex = (currentLbIndex + dir + visible.length) % visible.length;
+        lightboxImg.classList.remove('zoomed');
+        const item = visible[currentLbIndex];
+        lightboxImg.src = item.querySelector('img').src;
+        if (lightboxDownload) lightboxDownload.href = lightboxImg.src;
+        setCaption(item);
+        updateCounter();
+        preloadAdjacent(currentLbIndex);
+        requestAnimationFrame(() => { lightboxImg.style.opacity = ''; navigating = false; });
+    }, 200);
 }
 
 lightboxImg.addEventListener('click', () => lightboxImg.classList.toggle('zoomed'));
