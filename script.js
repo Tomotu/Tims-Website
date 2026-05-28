@@ -111,6 +111,20 @@ function toggleMenu(open) {
 hamburger.addEventListener('click', () => toggleMenu(!hamburger.classList.contains('open')));
 document.querySelectorAll('.mobile-link').forEach(l => l.addEventListener('click', () => toggleMenu(false)));
 
+// ── Anchor navigation — no URL hash ─────────────────────────────────────────
+// Intercept every #anchor click and use scrollIntoView instead. This prevents
+// the browser from ever storing a hash in the URL, which it would then try to
+// scroll to on the next page load — bypassing all our scroll-to-top fixes.
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+    const id = link.getAttribute('href');
+    if (id === '#') return;
+    link.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(id);
+        if (target) target.scrollIntoView({ behavior: prefersReducedMotion ? 'instant' : 'smooth' });
+    });
+});
+
 // ── Active nav section ───────────────────────────────────────────────────────
 const sectionObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
