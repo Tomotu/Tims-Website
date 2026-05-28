@@ -1,8 +1,10 @@
 'use strict';
 
-// Always start at top of page, never restore a mid-page scroll position
+// Always start at top of page — instant scroll bypasses CSS smooth-scroll,
+// replaceState strips any #hash so the browser doesn't auto-scroll to an anchor
 if (history.scrollRestoration) history.scrollRestoration = 'manual';
-window.scrollTo(0, 0);
+if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
 
 // ── Constants & state ────────────────────────────────────────────────────────
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
