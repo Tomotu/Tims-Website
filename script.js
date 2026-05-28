@@ -69,7 +69,7 @@ function setTheme(light) {
     themeToggle.setAttribute('aria-label', light ? 'Switch to dark mode' : 'Switch to light mode');
     localStorage.setItem('theme', light ? 'light' : 'dark');
     const tcMeta = document.querySelector('meta[name="theme-color"]');
-    if (tcMeta) tcMeta.content = light ? '#f7f6f3' : '#0d0d0d';
+    if (tcMeta) tcMeta.content = light ? '#e6e1d6' : '#1c1c1a';
 }
 setTheme(localStorage.getItem('theme') === 'light');
 themeToggle.addEventListener('click', () => setTheme(!document.body.classList.contains('light-mode')));
