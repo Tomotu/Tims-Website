@@ -162,7 +162,7 @@ const revealObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.1 });
 
 ['.section-header h2', '.filters', '.about-image', '.about-text h2',
- '.about-text p', '#contact h2', '#contact > p', '.social-links',
+ '.about-text p', '#contact h2', '#contact > p', '.contact-email', '.social-links',
 ].forEach(sel => {
     document.querySelectorAll(sel).forEach(el => { el.classList.add('reveal'); revealObserver.observe(el); });
 });
