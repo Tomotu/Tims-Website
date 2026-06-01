@@ -17,6 +17,18 @@ setTimeout(() => { scrollUnlocked = true; }, 1300);
 
 // ── Constants & state ────────────────────────────────────────────────────────
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Human-readable labels for each gallery category. Keeps display text in one
+// place so the hover caption, lightbox caption and aria-labels never show the
+// raw data-category value (e.g. "corporate", "events").
+const CATEGORY_LABELS = {
+    portraits: 'Portraits',
+    corporate: 'Corporate',
+    sports: 'Sports',
+    events: 'Events & Nightlife',
+};
+const catLabel = (cat) => CATEGORY_LABELS[cat] || (cat.charAt(0).toUpperCase() + cat.slice(1));
+
 let currentCategory = 'all';
 let currentLbIndex = 0;
 let lastFocusedItem = null;
@@ -177,13 +189,13 @@ photoItems.forEach((item, i) => {
     // Caption
     const cap = document.createElement('span');
     cap.className = 'photo-cat';
-    cap.textContent = item.dataset.category;
+    cap.textContent = catLabel(item.dataset.category);
     item.appendChild(cap);
 
     // Keyboard accessibility
     item.setAttribute('tabindex', '0');
     item.setAttribute('role', 'button');
-    item.setAttribute('aria-label', `View ${item.dataset.category} photo`);
+    item.setAttribute('aria-label', `View ${catLabel(item.dataset.category)} photo`);
 
     item.addEventListener('click', () => { lastFocusedItem = item; openLightbox(getVisible().indexOf(item)); });
     item.addEventListener('keydown', e => {
@@ -267,8 +279,7 @@ function updateCounter() {
 
 function setCaption(item) {
     if (!lightboxCaption) return;
-    const cat = item.dataset.category || '';
-    lightboxCaption.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+    lightboxCaption.textContent = catLabel(item.dataset.category || '');
 }
 
 function openLightbox(index) {
