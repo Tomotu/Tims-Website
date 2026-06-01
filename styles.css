@@ -502,122 +502,33 @@ body {
 
 #contact > p {
     color: var(--text-muted);
-    margin-bottom: 48px;
+    margin-bottom: 32px;
     font-size: 0.9rem;
     letter-spacing: 0.01em;
 }
 
 .contact-email {
-    font-size: 1.15rem;
+    display: inline-block;
+    margin: 0 auto 56px;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
     color: var(--text);
     text-decoration: none;
     border-bottom: 1px solid var(--border);
-    padding-bottom: 3px;
-    transition: border-color 0.2s;
-    letter-spacing: 0.02em;
+    padding-bottom: 4px;
+    transition: border-color 0.2s, color 0.2s;
+    letter-spacing: 0.01em;
 }
 
 .contact-email:hover {
     border-color: var(--text);
 }
 
-/* ── Contact form ── */
-#contact-form {
-    max-width: 640px;
-    margin: 48px auto 0;
-    text-align: left;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 16px;
-}
-
-.form-group label {
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-}
-
-.form-group input,
-.form-group textarea {
-    background: var(--bg-2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 300;
-    padding: 12px 16px;
-    border-radius: 2px;
-    outline: none;
-    transition: border-color 0.2s;
-    resize: none;
-    width: 100%;
-}
-
-.form-group input::placeholder,
-.form-group textarea::placeholder {
-    color: var(--text-muted);
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-    border-color: var(--accent-2);
-}
-
-.form-submit {
-    background: var(--accent);
-    color: #f0ece4;
-    border: none;
-    padding: 13px 36px;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 400;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    cursor: pointer;
-    border-radius: 2px;
-    transition: opacity 0.2s;
-    margin-top: 8px;
-}
-
-.form-submit:hover {
-    opacity: 0.85;
-}
-
-.form-submit:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.form-status {
-    margin-top: 16px;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    min-height: 1.2em;
-}
-
-.form-status.success { color: #6abf7b; }
-.form-status.error   { color: #e07070; }
-
-@media (max-width: 640px) {
-    .form-row { grid-template-columns: 1fr; }
-}
 
 .social-links {
     display: flex;
     gap: 32px;
     justify-content: center;
-    margin-top: 56px;
 }
 
 .social-links a {
