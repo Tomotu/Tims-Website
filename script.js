@@ -55,8 +55,6 @@ const lightboxCounter = document.getElementById('lightbox-counter');
 const lightboxDownload = document.getElementById('lightbox-download');
 const heroSlides = document.querySelectorAll('.hero-slide');
 const tagline = document.querySelector('.hero-tagline');
-const contactForm = document.getElementById('contact-form');
-const formStatus = document.getElementById('form-status');
 const copyrightYear = document.getElementById('copyright-year');
 
 // ── Preloader ────────────────────────────────────────────────────────────────
@@ -342,28 +340,3 @@ document.addEventListener('keydown', e => {
     if (e.key === 'ArrowLeft') navigate(-1);
 });
 
-// ── Contact form ─────────────────────────────────────────────────────────────
-contactForm.addEventListener('submit', async e => {
-    e.preventDefault();
-    const btn = contactForm.querySelector('.form-submit');
-    btn.disabled = true;
-    btn.textContent = 'Sending…';
-    formStatus.className = 'form-status';
-    formStatus.textContent = '';
-    try {
-        const res = await fetch(contactForm.action, {
-            method: 'POST', body: new FormData(contactForm), headers: { Accept: 'application/json' },
-        });
-        if (res.ok) {
-            formStatus.className = 'form-status success';
-            formStatus.textContent = "Message sent — I'll be in touch soon.";
-            contactForm.reset();
-        } else { throw new Error(); }
-    } catch {
-        formStatus.className = 'form-status error';
-        formStatus.textContent = 'Something went wrong. Please try emailing directly.';
-    } finally {
-        btn.disabled = false;
-        btn.textContent = 'Send Message';
-    }
-});
