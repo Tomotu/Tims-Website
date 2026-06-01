@@ -90,13 +90,29 @@ function setTheme(light) {
 setTheme(localStorage.getItem('theme') === 'light');
 themeToggle.addEventListener('click', () => setTheme(!document.body.classList.contains('light-mode')));
 
-// ── Hero slideshow ───────────────────────────────────────────────────────────
+// ── Hero slideshow + dots ────────────────────────────────────────────────────
 let currentSlide = 0;
-setInterval(() => {
+const heroDotsEl = document.getElementById('hero-dots');
+
+function goToSlide(index) {
+    if (heroDotsEl) heroDotsEl.children[currentSlide]?.classList.remove('active');
     heroSlides[currentSlide].classList.remove('active');
-    currentSlide = (currentSlide + 1) % heroSlides.length;
+    currentSlide = index;
     heroSlides[currentSlide].classList.add('active');
-}, 5000);
+    if (heroDotsEl) heroDotsEl.children[currentSlide]?.classList.add('active');
+}
+
+if (heroDotsEl && heroSlides.length > 1) {
+    heroSlides.forEach((_, i) => {
+        const dot = document.createElement('button');
+        dot.className = 'hero-dot' + (i === 0 ? ' active' : '');
+        dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+        dot.addEventListener('click', () => goToSlide(i));
+        heroDotsEl.appendChild(dot);
+    });
+}
+
+setInterval(() => goToSlide((currentSlide + 1) % heroSlides.length), 5000);
 
 // ── Hero tagline typewriter ──────────────────────────────────────────────────
 const taglineText = tagline.textContent;
@@ -275,9 +291,24 @@ function updateCounter() {
     lightboxCounter.textContent = `${currentLbIndex + 1} / ${visible.length}`;
 }
 
+// Parse a human-readable shoot name from an image filename.
+// "AmandaChen-Birthday-8thNov2025-21.jpg" → "Amanda Chen · Birthday"
+// "Wasco-BlueRibbonRun-17thMay2026-8.jpg" → "Wasco · Blue Ribbon Run"
+function captionFromSrc(src) {
+    const MONTHS = /jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec/i;
+    const file = decodeURIComponent((src || '').split('/').pop().replace(/\.[^.]+$/, ''));
+    const labels = file.split('-')
+        .filter(seg => seg && !/^\d+$/.test(seg) && !(/\d/.test(seg) && MONTHS.test(seg)))
+        .map(p => p.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/([A-Z]{2,})([A-Z][a-z])/g, '$1 $2').trim())
+        .filter(Boolean);
+    return labels.length ? labels.join(' · ') : null;
+}
+
 function setCaption(item) {
     if (!lightboxCaption) return;
-    lightboxCaption.textContent = catLabel(item.dataset.category || '');
+    const src = item.querySelector('img')?.getAttribute('src') || '';
+    const name = captionFromSrc(src);
+    lightboxCaption.textContent = name || catLabel(item.dataset.category || '');
 }
 
 function openLightbox(index) {
