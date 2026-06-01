@@ -473,6 +473,18 @@ body {
     margin-bottom: 0;
 }
 
+/* ── About inline email link ── */
+.about-email {
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1px;
+    transition: border-color 0.2s;
+}
+.about-email:hover {
+    border-color: var(--text);
+}
+
 /* ── Contact ── */
 #contact {
     padding: 120px 48px;
