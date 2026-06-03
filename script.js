@@ -507,3 +507,123 @@ if (!prefersReducedMotion) {
     applyHeroParallax();
 }
 
+// ── Mobile category carousels ─────────────────────────────────────────────────
+// Only built on narrow screens. Each category gets a heading + a horizontal
+// carousel with peeking neighbours, arrow buttons, and dot indicators.
+// Tapping a slide opens the same shared lightbox as the desktop grid.
+if (window.matchMedia('(max-width: 640px)').matches) {
+    const mobGallery = document.getElementById('mobile-gallery');
+    if (mobGallery) {
+        const CATS = ['portraits', 'corporate', 'sports', 'events'];
+
+        CATS.forEach(cat => {
+            const items = [...photoItems].filter(i => i.dataset.category === cat);
+            if (!items.length) return;
+
+            const section = document.createElement('div');
+            section.className = 'mob-cat-section';
+
+            const label = document.createElement('h3');
+            label.className = 'mob-cat-label';
+            label.textContent = catLabel(cat);
+            section.appendChild(label);
+
+            const carousel = document.createElement('div');
+            carousel.className = 'mob-carousel';
+
+            const wrap = document.createElement('div');
+            wrap.className = 'mob-track-wrap';
+
+            const track = document.createElement('div');
+            track.className = 'mob-track';
+
+            // Build slides
+            items.forEach((item, i) => {
+                const srcImg = item.querySelector('img');
+                const slide = document.createElement('div');
+                slide.className = 'mob-slide' + (i === 0 ? ' active' : '');
+
+                const img = document.createElement('img');
+                img.src = srcImg ? srcImg.src : '';
+                img.alt = srcImg ? srcImg.alt : '';
+                img.loading = 'lazy';
+                img.decoding = 'async';
+
+                slide.appendChild(img);
+                // Tap to open lightbox at this photo's index in the full visible set
+                slide.addEventListener('click', () => {
+                    lastFocusedItem = item;
+                    openLightbox(getVisible().indexOf(item));
+                });
+                track.appendChild(slide);
+            });
+
+            wrap.appendChild(track);
+            carousel.appendChild(wrap);
+
+            // Arrows
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'mob-arrow prev';
+            prevBtn.setAttribute('aria-label', 'Previous');
+            prevBtn.textContent = '‹';
+            prevBtn.disabled = true;
+
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'mob-arrow next';
+            nextBtn.setAttribute('aria-label', 'Next');
+            nextBtn.textContent = '›';
+            if (items.length <= 1) nextBtn.disabled = true;
+
+            carousel.appendChild(prevBtn);
+            carousel.appendChild(nextBtn);
+
+            // Dots
+            const dotsEl = document.createElement('div');
+            dotsEl.className = 'mob-dots';
+            items.forEach((_, i) => {
+                const dot = document.createElement('button');
+                dot.className = 'mob-dot' + (i === 0 ? ' active' : '');
+                dot.setAttribute('aria-label', `Go to photo ${i + 1}`);
+                dotsEl.appendChild(dot);
+            });
+            carousel.appendChild(dotsEl);
+
+            section.appendChild(carousel);
+            mobGallery.appendChild(section);
+
+            // State
+            let current = 0;
+            const slides = [...track.querySelectorAll('.mob-slide')];
+            const dots = [...dotsEl.querySelectorAll('.mob-dot')];
+
+            function goTo(idx) {
+                slides[current].classList.remove('active');
+                dots[current].classList.remove('active');
+                current = idx;
+                slides[current].classList.add('active');
+                dots[current].classList.add('active');
+                // Each slide is 100% of the inner wrap width; gap is 10px.
+                // Offset = index × (slideWidth + gap). We measure the first slide.
+                const slideW = slides[0].offsetWidth;
+                track.style.transform = `translateX(calc(-${current} * (${slideW}px + 10px)))`;
+                prevBtn.disabled = current === 0;
+                nextBtn.disabled = current === slides.length - 1;
+            }
+
+            prevBtn.addEventListener('click', () => { if (current > 0) goTo(current - 1); });
+            nextBtn.addEventListener('click', () => { if (current < slides.length - 1) goTo(current + 1); });
+            dots.forEach((dot, i) => dot.addEventListener('click', () => goTo(i)));
+
+            // Touch / swipe
+            let tx0 = 0;
+            track.addEventListener('touchstart', e => { tx0 = e.touches[0].clientX; }, { passive: true });
+            track.addEventListener('touchend', e => {
+                const dx = e.changedTouches[0].clientX - tx0;
+                if (Math.abs(dx) > 40) goTo(dx < 0
+                    ? Math.min(current + 1, slides.length - 1)
+                    : Math.max(current - 1, 0));
+            }, { passive: true });
+        });
+    }
+}
+

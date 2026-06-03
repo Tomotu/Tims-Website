@@ -895,6 +895,119 @@ footer {
     }
 }
 
+/* ── Mobile gallery carousels ── */
+#mobile-gallery { display: none; }
+
+@media (max-width: 640px) {
+    /* Hide desktop grid + filter bar; show mobile carousels instead */
+    .masonry-grid, .filters, #photo-count { display: none !important; }
+    #mobile-gallery { display: block; }
+
+    .mob-cat-section {
+        margin-bottom: 48px;
+    }
+
+    .mob-cat-label {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 1.35rem;
+        font-weight: 400;
+        letter-spacing: -0.01em;
+        color: var(--text);
+        margin-bottom: 16px;
+        padding: 0 2px;
+    }
+
+    /* Carousel wrapper — clips the track and shows peeking neighbours */
+    .mob-carousel {
+        position: relative;
+    }
+
+    .mob-track-wrap {
+        overflow: hidden;
+        /* Side padding reveals ~10% of prev/next slides */
+        padding: 0 42px;
+    }
+
+    .mob-track {
+        display: flex;
+        gap: 10px;
+        transition: transform 0.42s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        will-change: transform;
+    }
+
+    .mob-slide {
+        flex: 0 0 100%;
+        /* The padding on the wrap already carves out the peek area,
+           so the slide fills its natural slot */
+        position: relative;
+        border-radius: 2px;
+        overflow: hidden;
+        cursor: pointer;
+    }
+
+    .mob-slide img {
+        width: 100%;
+        display: block;
+        aspect-ratio: 4/3;
+        object-fit: cover;
+        transition: opacity 0.3s;
+    }
+
+    /* Dim neighbours; brighten the active one */
+    .mob-slide {
+        opacity: 0.38;
+        transform: scale(0.96);
+        transition: opacity 0.42s ease, transform 0.42s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .mob-slide.active {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    /* Arrow buttons sit outside the track */
+    .mob-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 2;
+        background: none;
+        border: none;
+        color: var(--text);
+        font-size: 1.3rem;
+        padding: 8px 6px;
+        cursor: pointer;
+        line-height: 1;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+    .mob-arrow:active { opacity: 1; }
+    .mob-arrow.prev { left: 0; }
+    .mob-arrow.next { right: 0; }
+    .mob-arrow[disabled] { opacity: 0.18; pointer-events: none; }
+
+    /* Dots */
+    .mob-dots {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        margin-top: 12px;
+    }
+    .mob-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--border);
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        transition: background 0.25s, transform 0.25s;
+    }
+    .mob-dot.active {
+        background: var(--text);
+        transform: scale(1.35);
+    }
+}
+
 @media (max-width: 640px) {
     #navbar,
     #navbar.scrolled {
@@ -911,10 +1024,6 @@ footer {
 
     .mobile-menu {
         display: flex;
-    }
-
-    .masonry-grid {
-        columns: 1;
     }
 
     #gallery {
