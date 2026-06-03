@@ -132,6 +132,16 @@ if (prefersReducedMotion) {
     }, 800);
 }
 
+// ── Hero h1 character reveal ─────────────────────────────────────────────────
+const heroH1 = document.querySelector('#hero h1');
+if (heroH1 && !prefersReducedMotion) {
+    const txt = heroH1.textContent;
+    heroH1.innerHTML = [...txt].map((c, i) =>
+        `<span class="char" style="--ci:${i}" aria-hidden="true">${c === ' ' ? '&nbsp;' : c}</span>`
+    ).join('');
+    heroH1.setAttribute('aria-label', txt); // keep accessible label on the parent
+}
+
 // ── Mobile menu ──────────────────────────────────────────────────────────────
 function toggleMenu(open) {
     hamburger.classList.toggle('open', open);
@@ -219,6 +229,24 @@ photoItems.forEach((item, i) => {
             openLightbox(getVisible().indexOf(item));
         }
     });
+
+    // 3D tilt on hover (desktop only)
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches && !prefersReducedMotion) {
+        item.addEventListener('mousemove', e => {
+            if (!item.classList.contains('entered')) return;
+            const r = item.getBoundingClientRect();
+            const x = (e.clientX - r.left) / r.width - 0.5;
+            const y = (e.clientY - r.top) / r.height - 0.5;
+            item.style.transition = 'transform 0.08s ease-out';
+            item.style.transform = `perspective(700px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg)`;
+        });
+        item.addEventListener('mouseleave', () => {
+            if (!item.classList.contains('entered')) return;
+            item.style.transition = 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+            item.style.transform = '';
+            setTimeout(() => { item.style.transition = ''; }, 520);
+        });
+    }
 });
 
 // ── Gallery photo count ──────────────────────────────────────────────────────
@@ -228,6 +256,37 @@ function updatePhotoCount() {
     photoCountEl.textContent = `${n} photo${n !== 1 ? 's' : ''}`;
 }
 updatePhotoCount();
+
+// ── Gallery staggered entrance ───────────────────────────────────────────────
+{
+    let galleryEntered = false;
+    const entranceObserver = new IntersectionObserver(entries => {
+        if (!entries[0].isIntersecting || galleryEntered) return;
+        galleryEntered = true;
+        entranceObserver.disconnect();
+        const items = [...photoItems].filter(i => !i.classList.contains('hidden'));
+        items.forEach((item, i) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(36px) scale(0.97)';
+            const delay = Math.min(i, 18) * 55;
+            setTimeout(() => {
+                item.style.transition = 'opacity 0.65s cubic-bezier(0.16,1,0.3,1), transform 0.65s cubic-bezier(0.16,1,0.3,1)';
+                item.style.opacity = '1';
+                item.style.transform = '';
+                setTimeout(() => {
+                    item.style.cssText = '';
+                    item.classList.add('entered');
+                }, 700);
+            }, delay);
+        });
+    }, { threshold: 0.05 });
+    if (!prefersReducedMotion) {
+        const grid = document.getElementById('masonry-grid');
+        if (grid) entranceObserver.observe(grid);
+    } else {
+        photoItems.forEach(item => item.classList.add('entered'));
+    }
+}
 
 // ── Photo count badges on filter buttons ─────────────────────────────────────
 filterBtns.forEach(btn => {
@@ -370,4 +429,32 @@ document.addEventListener('keydown', e => {
     if (e.key === 'ArrowRight') navigate(1);
     if (e.key === 'ArrowLeft') navigate(-1);
 });
+
+// ── Custom cursor ─────────────────────────────────────────────────────────────
+if (window.matchMedia('(hover: hover) and (pointer: fine)').matches && !prefersReducedMotion) {
+    const dot = document.createElement('div');
+    dot.className = 'cursor-dot';
+    document.body.appendChild(dot);
+    document.documentElement.classList.add('custom-cursor');
+
+    let mx = -200, my = -200, cx = -200, cy = -200;
+
+    document.addEventListener('mousemove', e => {
+        mx = e.clientX; my = e.clientY;
+        dot.classList.add('visible');
+    }, { passive: true });
+    document.addEventListener('mouseleave', () => dot.classList.remove('visible'));
+
+    (function animateDot() {
+        cx += (mx - cx) * 0.14;
+        cy += (my - cy) * 0.14;
+        dot.style.transform = `translate(calc(${cx}px - 50%), calc(${cy}px - 50%))`;
+        requestAnimationFrame(animateDot);
+    })();
+
+    document.querySelectorAll('.photo-item, a, button, [role="button"]').forEach(el => {
+        el.addEventListener('mouseenter', () => dot.classList.add('hovering'));
+        el.addEventListener('mouseleave', () => dot.classList.remove('hovering'));
+    });
+}
 
