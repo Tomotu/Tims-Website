@@ -296,8 +296,22 @@ updatePhotoCount();
         if (!entries[0].isIntersecting || galleryEntered) return;
         galleryEntered = true;
         entranceObserver.disconnect();
+        // Order the reveal by each item's on-screen position, not DOM order.
+        // The masonry is a CSS `columns` layout, where DOM order runs straight
+        // down the left column before moving to the next — so a DOM-order
+        // stagger makes the whole left column appear first. Sorting by visual
+        // top (then left) sweeps the reveal evenly top-to-bottom across every
+        // column. Rows are bucketed so items roughly side-by-side reveal
+        // together left-to-right rather than by sub-pixel height differences.
         const items = [...photoItems].filter(i => !i.classList.contains('hidden'));
-        items.forEach((item, i) => {
+        const measured = items
+            .map(item => ({ item, rect: item.getBoundingClientRect() }))
+            .sort((a, b) => {
+                const rowA = Math.round(a.rect.top / 80);
+                const rowB = Math.round(b.rect.top / 80);
+                return rowA - rowB || a.rect.left - b.rect.left;
+            });
+        measured.forEach(({ item }, i) => {
             // Start fully masked from the bottom edge, then wipe upward to reveal.
             item.style.clipPath = 'inset(100% 0 0 0)';
             item.style.opacity = '0';
