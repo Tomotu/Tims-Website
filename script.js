@@ -13,7 +13,7 @@ let scrollUnlocked = false;
 window.addEventListener('scroll', () => {
     if (!scrollUnlocked) window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
 }, { passive: true });
-setTimeout(() => { scrollUnlocked = true; }, 1300);
+setTimeout(() => { scrollUnlocked = true; }, 1600);
 
 // ── Constants & state ────────────────────────────────────────────────────────
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -57,11 +57,43 @@ const heroSlides = document.querySelectorAll('.hero-slide');
 const tagline = document.querySelector('.hero-tagline');
 const copyrightYear = document.getElementById('copyright-year');
 
-// ── Preloader ────────────────────────────────────────────────────────────────
-setTimeout(() => {
-    preloader.classList.add('fade-out');
-    preloader.addEventListener('transitionend', () => preloader.remove(), { once: true });
-}, 1200);
+// ── Cinematic intro ──────────────────────────────────────────────────────────
+// Counter ticks 0→100 while the progress bar fills, then the two panels split
+// apart to unveil the hero. The hero title's character reveal is fired the
+// instant the curtain starts opening so the name animates in as it appears.
+function revealHero() {
+    document.body.classList.add('intro-done');
+}
+
+if (prefersReducedMotion) {
+    // No counter, no curtain — just clear the cover.
+    revealHero();
+    preloader.classList.add('reveal');
+    setTimeout(() => preloader.remove(), 600);
+} else {
+    const countNum = document.getElementById('pl-count-num');
+    const barFill = document.querySelector('.pl-bar-fill');
+    const DURATION = 1500;                 // counter run time
+    const start = performance.now();
+
+    (function tick(now) {
+        const p = Math.min((now - start) / DURATION, 1);
+        const eased = 1 - Math.pow(1 - p, 2);   // ease-out
+        if (countNum) countNum.textContent = Math.round(eased * 100);
+        if (barFill) barFill.style.transform = `scaleX(${eased})`;
+        if (p < 1) {
+            requestAnimationFrame(tick);
+        } else {
+            revealHero();                        // curtain opens → title flies in
+            preloader.classList.add('reveal');
+            const drop = () => preloader.remove();
+            preloader.addEventListener('transitionend', e => {
+                if (e.target.classList.contains('pl-bottom')) drop();
+            });
+            setTimeout(drop, 1400);              // safety net if transitionend misses
+        }
+    })(start);
+}
 
 // ── Copyright year ───────────────────────────────────────────────────────────
 if (copyrightYear) copyrightYear.textContent = new Date().getFullYear();
@@ -266,17 +298,20 @@ updatePhotoCount();
         entranceObserver.disconnect();
         const items = [...photoItems].filter(i => !i.classList.contains('hidden'));
         items.forEach((item, i) => {
+            // Start fully masked from the bottom edge, then wipe upward to reveal.
+            item.style.clipPath = 'inset(100% 0 0 0)';
             item.style.opacity = '0';
-            item.style.transform = 'translateY(36px) scale(0.97)';
-            const delay = Math.min(i, 18) * 55;
+            item.style.transform = 'translateY(22px)';
+            const delay = Math.min(i, 18) * 60;
             setTimeout(() => {
-                item.style.transition = 'opacity 0.65s cubic-bezier(0.16,1,0.3,1), transform 0.65s cubic-bezier(0.16,1,0.3,1)';
+                item.style.transition = 'clip-path 0.85s cubic-bezier(0.16,1,0.3,1), opacity 0.6s ease, transform 0.85s cubic-bezier(0.16,1,0.3,1)';
+                item.style.clipPath = 'inset(0% 0 0 0)';
                 item.style.opacity = '1';
                 item.style.transform = '';
                 setTimeout(() => {
                     item.style.cssText = '';
                     item.classList.add('entered');
-                }, 700);
+                }, 900);
             }, delay);
         });
     }, { threshold: 0.05 });
