@@ -345,33 +345,9 @@ body {
     to   { opacity: 1; transform: translateY(0);      filter: blur(0);   }
 }
 
-/* ── Custom cursor ── */
-.cursor-dot {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 10px;
-    height: 10px;
-    background: #fff;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    opacity: 0;
-    mix-blend-mode: difference;
-    will-change: transform;
-    transition: width 0.3s ease, height 0.3s ease, opacity 0.4s ease;
-}
-
-.cursor-dot.visible  { opacity: 1; }
-.cursor-dot.hovering { width: 48px; height: 48px; }
-
-.custom-cursor,
-.custom-cursor a,
-.custom-cursor button,
-.custom-cursor [role="button"],
-.custom-cursor .photo-item { cursor: none !important; }
-
-@media (hover: none), (pointer: coarse) { .cursor-dot { display: none; } }
+/* ── Hero parallax ── */
+.hero-slides,
+.hero-content { will-change: transform; }
 
 /* ── Photo item 3D tilt ── */
 .photo-item {
@@ -941,7 +917,7 @@ footer {
         transform: none;
         filter: none;
     }
-    .cursor-dot { display: none; }
+    .hero-slides, .hero-content { transform: none !important; opacity: 1 !important; }
     .hero-dot { transition: none; }
 }
 

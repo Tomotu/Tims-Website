@@ -430,31 +430,31 @@ document.addEventListener('keydown', e => {
     if (e.key === 'ArrowLeft') navigate(-1);
 });
 
-// ── Custom cursor ─────────────────────────────────────────────────────────────
-if (window.matchMedia('(hover: hover) and (pointer: fine)').matches && !prefersReducedMotion) {
-    const dot = document.createElement('div');
-    dot.className = 'cursor-dot';
-    document.body.appendChild(dot);
-    document.documentElement.classList.add('custom-cursor');
+// ── Hero parallax (scroll-driven depth) ──────────────────────────────────────
+if (!prefersReducedMotion) {
+    const heroSlides = document.querySelector('.hero-slides');
+    const heroContent = document.querySelector('.hero-content');
+    let heroTicking = false;
 
-    let mx = -200, my = -200, cx = -200, cy = -200;
+    function applyHeroParallax() {
+        const y = window.scrollY;
+        const vh = window.innerHeight;
+        if (y > vh) { heroTicking = false; return; }   // skip once hero is off-screen
+        const p = y / vh;                              // 0 → 1 across the first viewport
+        if (heroSlides) heroSlides.style.transform = `scale(${1 + p * 0.12}) translateY(${y * 0.18}px)`;
+        if (heroContent) {
+            heroContent.style.transform = `translateY(${y * 0.4}px)`;
+            heroContent.style.opacity = String(Math.max(0, 1 - p * 1.4));
+        }
+        heroTicking = false;
+    }
 
-    document.addEventListener('mousemove', e => {
-        mx = e.clientX; my = e.clientY;
-        dot.classList.add('visible');
+    window.addEventListener('scroll', () => {
+        if (!heroTicking) {
+            heroTicking = true;
+            requestAnimationFrame(applyHeroParallax);
+        }
     }, { passive: true });
-    document.addEventListener('mouseleave', () => dot.classList.remove('visible'));
-
-    (function animateDot() {
-        cx += (mx - cx) * 0.14;
-        cy += (my - cy) * 0.14;
-        dot.style.transform = `translate(calc(${cx}px - 50%), calc(${cy}px - 50%))`;
-        requestAnimationFrame(animateDot);
-    })();
-
-    document.querySelectorAll('.photo-item, a, button, [role="button"]').forEach(el => {
-        el.addEventListener('mouseenter', () => dot.classList.add('hovering'));
-        el.addEventListener('mouseleave', () => dot.classList.remove('hovering'));
-    });
+    applyHeroParallax();
 }
 
