@@ -479,10 +479,7 @@ document.addEventListener('keydown', e => {
     if (e.key === 'ArrowLeft') navigate(-1);
 });
 
-// ── Scrolling photo collage — 4 infinite marquee rows ────────────────────────
-// Each row is populated with 2× the image set so the CSS marquee animation
-// can loop seamlessly: it slides by exactly 50% (one copy) then snaps back.
-// Odd rows go left, even rows go right (handled by CSS).
+// ── Scrolling photo collage — 4 rows, scroll-driven parallax ────────────────
 {
     const collageEl = document.getElementById('collage');
     if (collageEl) {
@@ -490,25 +487,27 @@ document.addEventListener('keydown', e => {
             .map(i => i.querySelector('img')?.getAttribute('src'))
             .filter(Boolean);
 
-        // Four different orderings so adjacent rows show different images
         const mid = Math.floor(srcs.length / 2);
         const orders = [
-            srcs,                                          // row 1: normal
-            [...srcs].reverse(),                           // row 2: reversed
-            [...srcs.slice(mid), ...srcs.slice(0, mid)],   // row 3: shifted
-            [...srcs].reverse().slice(mid).concat([...srcs].reverse().slice(0, mid)), // row 4
+            srcs,
+            [...srcs].reverse(),
+            [...srcs.slice(mid), ...srcs.slice(0, mid)],
+            [...srcs].reverse().slice(mid).concat([...srcs].reverse().slice(0, mid)),
         ];
 
-        // Different speeds so rows don't feel synchronised
-        const speeds = ['48s', '60s', '42s', '66s'];
+        // dir: -1=left, +1=right; initX offsets right-moving rows so they start
+        // with images visible (not blank space) at scrollY=0
+        const configs = [
+            { dir: -1, speed: 0.12, initX: 0 },
+            { dir: +1, speed: 0.16, initX: -4000 },
+            { dir: -1, speed: 0.10, initX: 0 },
+            { dir: +1, speed: 0.14, initX: -6000 },
+        ];
 
+        const rows = [];
         orders.forEach((imgSrcs, ri) => {
             const row = document.createElement('div');
             row.className = 'collage-row';
-            row.style.setProperty('--spd', speeds[ri]);
-
-            // Double the set: [A, A] — the animation slides by 50% (one A),
-            // then resets. The two copies are identical so the loop is invisible.
             [...imgSrcs, ...imgSrcs].forEach(src => {
                 const img = document.createElement('img');
                 img.src = src;
@@ -517,10 +516,24 @@ document.addEventListener('keydown', e => {
                 img.alt = '';
                 row.appendChild(img);
             });
-
-            if (prefersReducedMotion) row.style.animation = 'none';
             collageEl.appendChild(row);
+            rows.push({ el: row, cfg: configs[ri] });
         });
+
+        if (!prefersReducedMotion) {
+            let collTicking = false;
+            function applyCollageScroll() {
+                const sy = window.scrollY;
+                rows.forEach(({ el, cfg }) => {
+                    el.style.transform = `translateX(${cfg.initX + cfg.dir * sy * cfg.speed}px)`;
+                });
+                collTicking = false;
+            }
+            window.addEventListener('scroll', () => {
+                if (!collTicking) { requestAnimationFrame(applyCollageScroll); collTicking = true; }
+            }, { passive: true });
+            applyCollageScroll();
+        }
     }
 }
 
