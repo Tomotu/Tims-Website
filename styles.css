@@ -1105,8 +1105,8 @@ footer {
         align-self: end;
         z-index: 2;
         /* Diagonal bottom edge — mirrors the right-edge slant from desktop */
-        clip-path: polygon(0 0, 100% 0, 100% 72%, 0 100%);
-        padding: 48px 24px 72px;
+        clip-path: polygon(0 0, 100% 0, 100% 48%, 0 100%);
+        padding: 48px 24px 96px;
     }
     .about-text {
         flex: none;
