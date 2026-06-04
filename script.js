@@ -219,7 +219,7 @@ const revealObserver = new IntersectionObserver((entries) => {
     });
 }, { threshold: 0.1 });
 
-['.section-header h2', '.filters', '.about-image', '.about-text h2',
+['.section-header h2', '.filters', '.about-name', '.about-image',
  '.about-text p', '#contact h2', '#contact > p', '.contact-email', '.social-links',
 ].forEach(sel => {
     document.querySelectorAll(sel).forEach(el => { el.classList.add('reveal'); revealObserver.observe(el); });
@@ -479,6 +479,47 @@ document.addEventListener('keydown', e => {
     if (e.key === 'ArrowLeft') navigate(-1);
 });
 
+// ── Scrolling photo collage ──────────────────────────────────────────────────
+// Two rows of all gallery photos, rows move in opposite directions as
+// you scroll — row A drifts left, row B drifts right.
+{
+    const rowA = document.getElementById('collage-row-a');
+    const rowB = document.getElementById('collage-row-b');
+
+    if (rowA && rowB) {
+        const srcs = [...photoItems].map(i => i.querySelector('img')?.getAttribute('src')).filter(Boolean);
+        const reversed = [...srcs].reverse();
+
+        function makeImg(src) {
+            const img = document.createElement('img');
+            img.src = src;
+            img.loading = 'lazy';
+            img.decoding = 'async';
+            img.alt = '';
+            return img;
+        }
+
+        // Duplicate each row so there's always content visible after translation
+        [...srcs, ...srcs].forEach(src => rowA.appendChild(makeImg(src)));
+        [...reversed, ...reversed].forEach(src => rowB.appendChild(makeImg(src)));
+
+        if (!prefersReducedMotion) {
+            let collageTicking = false;
+            window.addEventListener('scroll', () => {
+                if (!collageTicking) {
+                    collageTicking = true;
+                    requestAnimationFrame(() => {
+                        const y = window.scrollY;
+                        rowA.style.transform = `translateX(${-y * 0.14}px)`;
+                        rowB.style.transform = `translateX(${y * 0.14}px)`;
+                        collageTicking = false;
+                    });
+                }
+            }, { passive: true });
+        }
+    }
+}
+
 // ── Hero parallax (scroll-driven depth) ──────────────────────────────────────
 if (!prefersReducedMotion) {
     const heroSlides = document.querySelector('.hero-slides');
@@ -508,9 +549,11 @@ if (!prefersReducedMotion) {
 }
 
 // ── Mobile category carousels ─────────────────────────────────────────────────
-// Only built on narrow screens. Each category gets a heading + a horizontal
-// carousel with peeking neighbours, arrow buttons, and dot indicators.
-// Tapping a slide opens the same shared lightbox as the desktop grid.
+// Infinite-looping carousel per category. Uses the clone technique:
+// a clone of the last real slide is prepended, and a clone of the first is
+// appended. The carousel starts at position 1 (the real first slide). When
+// it slides into a clone position it instantly jumps to the corresponding
+// real slide — making the loop invisible. Both neighbours always peek in.
 if (window.matchMedia('(max-width: 640px)').matches) {
     const mobGallery = document.getElementById('mobile-gallery');
     if (mobGallery) {
@@ -537,26 +580,35 @@ if (window.matchMedia('(max-width: 640px)').matches) {
             const track = document.createElement('div');
             track.className = 'mob-track';
 
-            // Build slides
-            items.forEach((item, i) => {
+            function makeSlide(item) {
                 const srcImg = item.querySelector('img');
                 const slide = document.createElement('div');
-                slide.className = 'mob-slide' + (i === 0 ? ' active' : '');
-
+                slide.className = 'mob-slide';
                 const img = document.createElement('img');
                 img.src = srcImg ? srcImg.src : '';
                 img.alt = srcImg ? srcImg.alt : '';
                 img.loading = 'lazy';
                 img.decoding = 'async';
-
                 slide.appendChild(img);
-                // Tap to open lightbox at this photo's index in the full visible set
+                return slide;
+            }
+
+            // Clone last + real slides + clone first → enables infinite loop
+            const cloneFirst = makeSlide(items[0]);
+            const cloneLast  = makeSlide(items[items.length - 1]);
+            cloneLast.dataset.clone = 'last';
+            cloneFirst.dataset.clone = 'first';
+            track.appendChild(cloneLast);
+            items.forEach((item, i) => {
+                const slide = makeSlide(item);
+                // Click opens lightbox for this item
                 slide.addEventListener('click', () => {
                     lastFocusedItem = item;
                     openLightbox(getVisible().indexOf(item));
                 });
                 track.appendChild(slide);
             });
+            track.appendChild(cloneFirst);
 
             wrap.appendChild(track);
             carousel.appendChild(wrap);
@@ -566,18 +618,16 @@ if (window.matchMedia('(max-width: 640px)').matches) {
             prevBtn.className = 'mob-arrow prev';
             prevBtn.setAttribute('aria-label', 'Previous');
             prevBtn.textContent = '‹';
-            prevBtn.disabled = true;
 
             const nextBtn = document.createElement('button');
             nextBtn.className = 'mob-arrow next';
             nextBtn.setAttribute('aria-label', 'Next');
             nextBtn.textContent = '›';
-            if (items.length <= 1) nextBtn.disabled = true;
 
             carousel.appendChild(prevBtn);
             carousel.appendChild(nextBtn);
 
-            // Dots
+            // Dots (one per real slide)
             const dotsEl = document.createElement('div');
             dotsEl.className = 'mob-dots';
             items.forEach((_, i) => {
@@ -591,37 +641,70 @@ if (window.matchMedia('(max-width: 640px)').matches) {
             section.appendChild(carousel);
             mobGallery.appendChild(section);
 
-            // State
-            let current = 0;
-            const slides = [...track.querySelectorAll('.mob-slide')];
+            // State: current is 1-based index into the full track (0=clone-last, 1..n=real, n+1=clone-first)
+            const allSlides = [...track.querySelectorAll('.mob-slide')];
             const dots = [...dotsEl.querySelectorAll('.mob-dot')];
+            const realCount = items.length;
+            let current = 1;   // start at real first slide
+            let transitioning = false;
 
-            function goTo(idx) {
-                slides[current].classList.remove('active');
-                dots[current].classList.remove('active');
-                current = idx;
-                slides[current].classList.add('active');
-                dots[current].classList.add('active');
-                // Each slide is 100% of the inner wrap width; gap is 10px.
-                // Offset = index × (slideWidth + gap). We measure the first slide.
-                const slideW = slides[0].offsetWidth;
-                track.style.transform = `translateX(calc(-${current} * (${slideW}px + 10px)))`;
-                prevBtn.disabled = current === 0;
-                nextBtn.disabled = current === slides.length - 1;
+            function slideW() { return allSlides[0].offsetWidth + 10; }  // width + gap
+
+            function setPos(idx, animate) {
+                track.style.transition = animate
+                    ? 'transform 0.42s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                    : 'none';
+                track.style.transform = `translateX(${-idx * slideW()}px)`;
             }
 
-            prevBtn.addEventListener('click', () => { if (current > 0) goTo(current - 1); });
-            nextBtn.addEventListener('click', () => { if (current < slides.length - 1) goTo(current + 1); });
-            dots.forEach((dot, i) => dot.addEventListener('click', () => goTo(i)));
+            function syncDots(realIdx) {
+                dots.forEach((d, i) => d.classList.toggle('active', i === realIdx));
+            }
+
+            function syncActive(idx) {
+                allSlides.forEach((s, i) => s.classList.toggle('active', i === idx));
+                // dot index is 0-based real index = current - 1
+                syncDots(idx - 1);
+            }
+
+            // Initialize without animation
+            setPos(current, false);
+            syncActive(current);
+
+            function goTo(idx) {
+                if (transitioning) return;
+                transitioning = true;
+                current = idx;
+                syncActive(current);
+                setPos(current, true);
+            }
+
+            // After transition: if we landed on a clone, jump instantly to real counterpart
+            track.addEventListener('transitionend', () => {
+                transitioning = false;
+                if (current === 0) {
+                    // Clone-last → jump to real last
+                    current = realCount;
+                    setPos(current, false);
+                    syncActive(current);
+                } else if (current === realCount + 1) {
+                    // Clone-first → jump to real first
+                    current = 1;
+                    setPos(current, false);
+                    syncActive(current);
+                }
+            });
+
+            prevBtn.addEventListener('click', () => goTo(current - 1));
+            nextBtn.addEventListener('click', () => goTo(current + 1));
+            dots.forEach((dot, i) => dot.addEventListener('click', () => goTo(i + 1)));
 
             // Touch / swipe
             let tx0 = 0;
             track.addEventListener('touchstart', e => { tx0 = e.touches[0].clientX; }, { passive: true });
             track.addEventListener('touchend', e => {
                 const dx = e.changedTouches[0].clientX - tx0;
-                if (Math.abs(dx) > 40) goTo(dx < 0
-                    ? Math.min(current + 1, slides.length - 1)
-                    : Math.max(current - 1, 0));
+                if (Math.abs(dx) > 40) goTo(dx < 0 ? current + 1 : current - 1);
             }, { passive: true });
         });
     }

@@ -541,37 +541,91 @@ body.intro-done #hero h1 .char {
     display: none;
 }
 
-/* ── About ── */
-#about {
-    padding: 120px 48px;
-    max-width: 1100px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 1.2fr;
-    gap: 80px;
-    align-items: center;
+/* ── Scrolling photo collage ── */
+#collage {
+    overflow: hidden;
+    padding: 64px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
     border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    user-select: none;
+}
+
+.collage-row {
+    display: flex;
+    gap: 6px;
+    will-change: transform;
+    /* Initial transform is set by JS; no transition — pure rAF-driven */
+}
+
+.collage-row img {
+    height: 150px;
+    width: auto;
+    flex-shrink: 0;
+    display: block;
+    object-fit: cover;
+    opacity: 0.65;
+    filter: grayscale(0.15);
+    transition: opacity 0.4s, filter 0.4s;
+    pointer-events: none;
+}
+
+/* ── About — editorial 3-column layout ── */
+#about {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: stretch;
+    border-top: 1px solid var(--border);
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.about-name {
+    padding: 80px 56px 80px 48px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 20px;
+}
+
+.about-role-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.about-name h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(2.8rem, 4.5vw, 5.5rem);
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: -0.03em;
+    line-height: 0.92;
+    color: var(--text);
 }
 
 .about-image {
-    position: sticky;
-    top: 100px;
-    align-self: start;
+    /* fills the middle column, no padding */
 }
 
 .about-image img {
     width: 100%;
-    aspect-ratio: 3 / 4;
+    height: 100%;
+    min-height: 480px;
     object-fit: cover;
     display: block;
 }
 
-.about-text h2 {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: 1.75rem;
-    font-weight: 400;
-    margin-bottom: 28px;
-    letter-spacing: -0.01em;
+.about-text {
+    padding: 80px 48px 80px 56px;
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .about-text p {
@@ -785,21 +839,8 @@ footer {
 }
 
 
-/* ── Photo hover caption ── */
-.photo-cat {
-    position: absolute;
-    bottom: 12px;
-    left: 14px;
-    font-size: 0.62rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.75);
-    opacity: 0;
-    transition: opacity 0.35s ease;
-    z-index: 1;
-    pointer-events: none;
-}
-.photo-item:hover .photo-cat { opacity: 1; }
+/* ── Photo hover caption — hidden per design brief ── */
+.photo-cat { display: none; }
 
 /* ── Lightbox image ── */
 #lightbox-img {
@@ -884,15 +925,16 @@ footer {
     }
 
     #about {
-        grid-template-columns: 1fr;
-        gap: 48px;
-        max-width: 600px;
+        grid-template-columns: 1fr 1fr;
     }
-
-    .about-image {
-        position: static;
-        max-width: 380px;
+    .about-name {
+        grid-column: 1 / -1;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 60px 48px 40px;
     }
+    .about-image { order: 2; }
+    .about-text  { order: 3; }
 }
 
 /* ── Mobile gallery carousels ── */
@@ -1030,7 +1072,26 @@ footer {
         padding: 80px 16px 60px;
     }
 
-    #about,
+    /* About: stack vertically on mobile */
+    #about {
+        grid-template-columns: 1fr;
+        padding: 0;
+    }
+    .about-name {
+        padding: 60px 24px 40px;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+    .about-image img { min-height: 320px; }
+    .about-text {
+        padding: 40px 24px 60px;
+        border-left: none;
+        border-top: 1px solid var(--border);
+    }
+
+    #collage { padding: 40px 0; }
+    .collage-row img { height: 100px; }
+
     #contact {
         padding: 80px 24px;
     }
@@ -1151,8 +1212,8 @@ footer {
     #hero h1 { color: #000; font-size: 3rem; }
     .hero-tagline { color: #555; }
 
-    #about { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-    .about-image img { width: 100%; }
+    #about { grid-template-columns: 1fr 1fr 1fr; }
+    .about-image img { width: 100%; height: auto; min-height: 0; }
 
     .masonry-grid { columns: 3; }
     .photo-item { break-inside: avoid; margin-bottom: 8px; }
