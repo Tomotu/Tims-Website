@@ -479,44 +479,48 @@ document.addEventListener('keydown', e => {
     if (e.key === 'ArrowLeft') navigate(-1);
 });
 
-// ── Scrolling photo collage ──────────────────────────────────────────────────
-// Two rows of all gallery photos, rows move in opposite directions as
-// you scroll — row A drifts left, row B drifts right.
+// ── Scrolling photo collage — 4 infinite marquee rows ────────────────────────
+// Each row is populated with 2× the image set so the CSS marquee animation
+// can loop seamlessly: it slides by exactly 50% (one copy) then snaps back.
+// Odd rows go left, even rows go right (handled by CSS).
 {
-    const rowA = document.getElementById('collage-row-a');
-    const rowB = document.getElementById('collage-row-b');
+    const collageEl = document.getElementById('collage');
+    if (collageEl) {
+        const srcs = [...photoItems]
+            .map(i => i.querySelector('img')?.getAttribute('src'))
+            .filter(Boolean);
 
-    if (rowA && rowB) {
-        const srcs = [...photoItems].map(i => i.querySelector('img')?.getAttribute('src')).filter(Boolean);
-        const reversed = [...srcs].reverse();
+        // Four different orderings so adjacent rows show different images
+        const mid = Math.floor(srcs.length / 2);
+        const orders = [
+            srcs,                                          // row 1: normal
+            [...srcs].reverse(),                           // row 2: reversed
+            [...srcs.slice(mid), ...srcs.slice(0, mid)],   // row 3: shifted
+            [...srcs].reverse().slice(mid).concat([...srcs].reverse().slice(0, mid)), // row 4
+        ];
 
-        function makeImg(src) {
-            const img = document.createElement('img');
-            img.src = src;
-            img.loading = 'lazy';
-            img.decoding = 'async';
-            img.alt = '';
-            return img;
-        }
+        // Different speeds so rows don't feel synchronised
+        const speeds = ['48s', '60s', '42s', '66s'];
 
-        // Duplicate each row so there's always content visible after translation
-        [...srcs, ...srcs].forEach(src => rowA.appendChild(makeImg(src)));
-        [...reversed, ...reversed].forEach(src => rowB.appendChild(makeImg(src)));
+        orders.forEach((imgSrcs, ri) => {
+            const row = document.createElement('div');
+            row.className = 'collage-row';
+            row.style.setProperty('--spd', speeds[ri]);
 
-        if (!prefersReducedMotion) {
-            let collageTicking = false;
-            window.addEventListener('scroll', () => {
-                if (!collageTicking) {
-                    collageTicking = true;
-                    requestAnimationFrame(() => {
-                        const y = window.scrollY;
-                        rowA.style.transform = `translateX(${-y * 0.14}px)`;
-                        rowB.style.transform = `translateX(${y * 0.14}px)`;
-                        collageTicking = false;
-                    });
-                }
-            }, { passive: true });
-        }
+            // Double the set: [A, A] — the animation slides by 50% (one A),
+            // then resets. The two copies are identical so the loop is invisible.
+            [...imgSrcs, ...imgSrcs].forEach(src => {
+                const img = document.createElement('img');
+                img.src = src;
+                img.loading = 'lazy';
+                img.decoding = 'async';
+                img.alt = '';
+                row.appendChild(img);
+            });
+
+            if (prefersReducedMotion) row.style.animation = 'none';
+            collageEl.appendChild(row);
+        });
     }
 }
 
