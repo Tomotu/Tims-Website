@@ -605,9 +605,8 @@ body.intro-done #hero h1 .char {
     z-index: 2;
     flex: 0 0 38%;
     background: var(--bg);
-    /* Diagonal: top-right at full width, bottom-right cuts in to 68% */
-    clip-path: polygon(0 0, 100% 0, 68% 100%, 0 100%);
-    padding: 72px 96px 72px 56px;
+    clip-path: polygon(0 0, 100% 0, 38% 100%, 0 100%);
+    padding: 72px 120px 72px 56px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -1105,7 +1104,7 @@ footer {
         align-self: end;
         z-index: 2;
         /* Diagonal bottom edge — mirrors the right-edge slant from desktop */
-        clip-path: polygon(0 0, 100% 0, 100% 48%, 0 100%);
+        clip-path: polygon(0 0, 100% 0, 100% 22%, 0 100%);
         padding: 48px 24px 96px;
     }
     .about-text {
