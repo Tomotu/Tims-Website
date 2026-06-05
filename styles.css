@@ -1053,29 +1053,14 @@ footer {
         background: var(--text);
         transform: scale(1.35);
     }
-}
 
-@media (max-width: 640px) {
     #navbar,
-    #navbar.scrolled {
-        padding: 20px 24px;
-    }
+    #navbar.scrolled { padding: 20px 24px; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .mobile-menu { display: flex; }
 
-    .nav-links {
-        display: none;
-    }
-
-    .hamburger {
-        display: flex;
-    }
-
-    .mobile-menu {
-        display: flex;
-    }
-
-    #gallery {
-        padding: 80px 16px 60px;
-    }
+    #gallery { padding: 80px 16px 60px; }
 
     /* About on mobile: image + name overlap (grid-row 1), text below */
     #about {
@@ -1103,7 +1088,6 @@ footer {
         grid-row: 1;
         align-self: end;
         z-index: 2;
-        /* Diagonal bottom edge — mirrors the right-edge slant from desktop */
         clip-path: polygon(0 0, 100% 0, 100% 22%, 0 100%);
         padding: 48px 24px 96px;
     }
@@ -1119,9 +1103,7 @@ footer {
     #collage { padding: 32px 0; }
     .collage-row img { height: 90px; }
 
-    #contact {
-        padding: 80px 24px;
-    }
+    #contact { padding: 80px 24px; }
 
     footer {
         padding: 24px;

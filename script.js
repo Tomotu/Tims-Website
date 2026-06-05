@@ -98,14 +98,24 @@ if (prefersReducedMotion) {
 // ── Copyright year ───────────────────────────────────────────────────────────
 if (copyrightYear) copyrightYear.textContent = new Date().getFullYear();
 
-// ── Scroll events ────────────────────────────────────────────────────────────
+// ── Unified scroll handler ────────────────────────────────────────────────────
+// All scroll-driven effects register here; one rAF fires them all per frame.
+const scrollFns = [];
+let scrollTicking = false;
 window.addEventListener('scroll', () => {
-    navbar.classList.toggle('scrolled', window.scrollY > 60);
-    backToTop.classList.toggle('visible', window.scrollY > 400);
-
-    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-    if (scrollProgress) scrollProgress.style.width = `${(window.scrollY / scrollable) * 100}%`;
+    if (!scrollTicking) {
+        requestAnimationFrame(() => { scrollFns.forEach(fn => fn()); scrollTicking = false; });
+        scrollTicking = true;
+    }
 }, { passive: true });
+
+scrollFns.push(() => {
+    const y = window.scrollY;
+    navbar.classList.toggle('scrolled', y > 60);
+    backToTop.classList.toggle('visible', y > 400);
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    if (scrollProgress) scrollProgress.style.width = `${(y / scrollable) * 100}%`;
+});
 
 // ── Back to top ──────────────────────────────────────────────────────────────
 backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
@@ -352,13 +362,13 @@ filterBtns.forEach(btn => {
         btn.classList.add('active');
         if (filterTimeout) clearTimeout(filterTimeout);
 
-        const toHide = [...photoItems].filter(item =>
-            !item.classList.contains('hidden') &&
-            currentCategory !== 'all' && item.dataset.category !== currentCategory
-        );
-        const toShow = [...photoItems].filter(item => {
-            if (!item.classList.contains('hidden')) return false;
-            return currentCategory === 'all' || item.dataset.category === currentCategory;
+        const toHide = [], toShow = [];
+        const isAll = currentCategory === 'all';
+        photoItems.forEach(item => {
+            const hidden = item.classList.contains('hidden');
+            const match = isAll || item.dataset.category === currentCategory;
+            if (!hidden && !match) toHide.push(item);
+            else if (hidden && match) toShow.push(item);
         });
 
         toHide.forEach(item => {
@@ -521,17 +531,13 @@ document.addEventListener('keydown', e => {
         });
 
         if (!prefersReducedMotion) {
-            let collTicking = false;
             function applyCollageScroll() {
                 const sy = window.scrollY;
                 rows.forEach(({ el, cfg }) => {
                     el.style.transform = `translateX(${cfg.initX + cfg.dir * sy * cfg.speed}px)`;
                 });
-                collTicking = false;
             }
-            window.addEventListener('scroll', () => {
-                if (!collTicking) { requestAnimationFrame(applyCollageScroll); collTicking = true; }
-            }, { passive: true });
+            scrollFns.push(applyCollageScroll);
             applyCollageScroll();
         }
     }
@@ -539,29 +545,22 @@ document.addEventListener('keydown', e => {
 
 // ── Hero parallax (scroll-driven depth) ──────────────────────────────────────
 if (!prefersReducedMotion) {
-    const heroSlides = document.querySelector('.hero-slides');
+    const heroSlidesEl = document.querySelector('.hero-slides');
     const heroContent = document.querySelector('.hero-content');
-    let heroTicking = false;
 
     function applyHeroParallax() {
         const y = window.scrollY;
         const vh = window.innerHeight;
-        if (y > vh) { heroTicking = false; return; }   // skip once hero is off-screen
-        const p = y / vh;                              // 0 → 1 across the first viewport
-        if (heroSlides) heroSlides.style.transform = `scale(${1 + p * 0.12}) translateY(${y * 0.18}px)`;
+        if (y > vh) return;
+        const p = y / vh;
+        if (heroSlidesEl) heroSlidesEl.style.transform = `scale(${1 + p * 0.12}) translateY(${y * 0.18}px)`;
         if (heroContent) {
             heroContent.style.transform = `translateY(${y * 0.4}px)`;
             heroContent.style.opacity = String(Math.max(0, 1 - p * 1.4));
         }
-        heroTicking = false;
     }
 
-    window.addEventListener('scroll', () => {
-        if (!heroTicking) {
-            heroTicking = true;
-            requestAnimationFrame(applyHeroParallax);
-        }
-    }, { passive: true });
+    scrollFns.push(applyHeroParallax);
     applyHeroParallax();
 }
 
