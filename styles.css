@@ -4,7 +4,7 @@
     --border: #2e3229;
     --text: #e6e1d6;
     --text-muted: #787870;
-    --gap: 6px;
+    --gap: 3px;
     --shimmer: #252521;
     --nav-scrolled-bg: rgba(28, 28, 26, 0.93);
     --accent: #a0453f;
@@ -295,7 +295,7 @@ body {
 .hero-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.5) 55%, rgba(0,0,0,0.68) 100%);
+    background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.42) 50%, rgba(0,0,0,0.78) 100%);
     z-index: 1;
 }
 
@@ -319,10 +319,10 @@ body {
 }
 
 .hero-tagline {
-    font-size: 0.75rem;
-    letter-spacing: 0.35em;
+    font-size: 0.68rem;
+    letter-spacing: 0.42em;
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: rgba(255, 255, 255, 0.55);
 }
 
 .scroll-indicator {
@@ -493,7 +493,7 @@ body.intro-done #hero h1 .char {
 .photo-item img {
     width: 100%;
     display: block;
-    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s, filter 0.4s;
     opacity: 0;
 }
 
@@ -502,7 +502,8 @@ body.intro-done #hero h1 .char {
 }
 
 .photo-item:hover img {
-    transform: scale(1.03);
+    transform: scale(1.04);
+    filter: brightness(0.88);
 }
 
 .photo-item::after {
@@ -861,7 +862,8 @@ footer {
     font-family: 'Playfair Display', Georgia, serif;
     font-size: 1.75rem;
     font-weight: 400;
-    letter-spacing: -0.01em;
+    font-style: italic;
+    letter-spacing: -0.02em;
 }
 .photo-count {
     margin-left: auto;
