@@ -415,59 +415,50 @@ body.intro-done #hero h1 .char {
     margin: 0 auto;
 }
 
-.section-header {
-    margin-bottom: 32px;
-}
-
-.section-header h2 {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: 1.75rem;
-    font-weight: 400;
-    letter-spacing: -0.01em;
-}
-
 /* ── Filters ── */
 .filters {
     display: flex;
-    gap: 8px;
-    margin-bottom: 40px;
+    gap: 0;
+    margin-bottom: 48px;
     flex-wrap: wrap;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
 }
 
 .filter-btn {
     background: none;
-    border: 1px solid var(--border);
+    border: none;
+    border-bottom: 2px solid transparent;
     color: var(--text-muted);
-    padding: 8px 22px;
-    border-radius: 2px;
+    padding: 6px 0;
+    margin-right: 32px;
     cursor: pointer;
     font-family: 'Inter', sans-serif;
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     font-weight: 400;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    transition: background 0.2s, border-color 0.2s, color 0.2s;
+    transition: color 0.2s, border-color 0.2s;
 }
 
 .filter-btn:hover {
-    border-color: var(--accent-2);
     color: var(--text);
 }
 
 .filter-count {
-    opacity: 0.45;
-    font-size: 0.65rem;
-    margin-left: 4px;
+    opacity: 0.4;
+    font-size: 0.6rem;
+    margin-left: 5px;
+    vertical-align: super;
 }
 
 .filter-btn.active .filter-count {
-    opacity: 0.6;
+    opacity: 0.55;
 }
 
 .filter-btn.active {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #f0ece4;
+    color: var(--text);
+    border-bottom-color: var(--accent);
 }
 
 /* ── Masonry Grid ── */
@@ -644,10 +635,11 @@ body.intro-done #hero h1 .char {
 }
 
 .about-text p {
-    color: var(--text-muted);
-    line-height: 1.85;
-    margin-bottom: 18px;
-    font-size: 0.95rem;
+    color: var(--text);
+    opacity: 0.65;
+    line-height: 1.9;
+    margin-bottom: 20px;
+    font-size: 1rem;
 }
 
 .about-text p:last-child { margin-bottom: 0; }
@@ -667,35 +659,50 @@ body.intro-done #hero h1 .char {
 /* ── Contact ── */
 #contact {
     padding: 120px 48px;
-    text-align: center;
     border-top: 1px solid var(--border);
 }
 
-#contact h2 {
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: 2.5rem;
-    font-weight: 400;
-    margin-bottom: 16px;
-    letter-spacing: -0.02em;
+.contact-inner {
+    display: flex;
+    align-items: center;
+    gap: 80px;
+    max-width: 1100px;
 }
 
-#contact > p {
+.contact-eyebrow {
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
     color: var(--text-muted);
-    margin-bottom: 32px;
-    font-size: 0.9rem;
-    letter-spacing: 0.01em;
+    margin-bottom: 28px;
+}
+
+.contact-left h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(3.5rem, 5.5vw, 6rem);
+    font-weight: 400;
+    font-style: italic;
+    line-height: 0.88;
+    letter-spacing: -0.03em;
+    color: var(--text);
+}
+
+.contact-right {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 28px;
 }
 
 .contact-email {
-    display: inline-block;
-    margin: 0 auto 56px;
-    font-family: 'Playfair Display', Georgia, serif;
-    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(0.95rem, 1.4vw, 1.15rem);
     color: var(--text);
     text-decoration: none;
     border-bottom: 1px solid var(--border);
-    padding-bottom: 4px;
-    transition: border-color 0.2s, color 0.2s;
+    padding-bottom: 5px;
+    transition: border-color 0.2s;
     letter-spacing: 0.01em;
 }
 
@@ -703,24 +710,28 @@ body.intro-done #hero h1 .char {
     border-color: var(--text);
 }
 
-
 .social-links {
     display: flex;
-    gap: 32px;
-    justify-content: center;
+    gap: 28px;
 }
 
 .social-links a {
     color: var(--text-muted);
     text-decoration: none;
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     transition: color 0.2s;
 }
 
 .social-links a:hover {
     color: var(--text);
+}
+
+.contact-note {
+    font-size: 0.83rem;
+    color: var(--text-muted);
+    line-height: 1.75;
 }
 
 /* ── Footer ── */
@@ -842,12 +853,20 @@ footer {
 .section-header {
     display: flex;
     align-items: baseline;
-    gap: 16px;
-    margin-bottom: 32px;
+    gap: 0;
+    margin-bottom: 28px;
+}
+.section-header h2 {
+    flex-shrink: 0;
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.75rem;
+    font-weight: 400;
+    letter-spacing: -0.01em;
 }
 .photo-count {
-    font-size: 0.72rem;
-    letter-spacing: 0.08em;
+    margin-left: auto;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
     color: var(--text-muted);
 }
 
@@ -1103,7 +1122,9 @@ footer {
     #collage { padding: 32px 0; }
     .collage-row img { height: 90px; }
 
-    #contact { padding: 80px 24px; }
+    #contact { padding: 72px 24px; }
+    .contact-inner { flex-direction: column; gap: 48px; align-items: flex-start; }
+    .contact-left h2 { font-size: clamp(3rem, 12vw, 4.5rem); }
 
     footer {
         padding: 24px;
