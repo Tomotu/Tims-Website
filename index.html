@@ -1,382 +1,218 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark" data-grain="on">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tim Chong — Photography</title>
-    <script>if (history.scrollRestoration) history.scrollRestoration = 'manual';</script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tim Chong — Photography</title>
+<meta name="description" content="Photography by Tim Chong — portraits, corporate, sports, and events & nightlife." />
+<meta name="author" content="Tim Chong" />
+<link rel="canonical" href="https://tomotu.github.io/Tims-Website/" />
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230d0d0d'/%3E%3Ctext x='16' y='21' font-size='13' font-weight='600' fill='%23fff' text-anchor='middle' font-family='Georgia%2C serif'%3ETC%3C/text%3E%3C/svg%3E">
+<meta name="theme-color" content="#111110" />
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230d0d0d'/%3E%3Ctext x='16' y='21' font-size='13' font-weight='600' fill='%23fff' text-anchor='middle' font-family='Georgia%2C serif'%3ETC%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
 
-    <!-- SEO -->
-    <meta name="description" content="Photography by Tim Chong — portraits, corporate, sports, and events &amp; nightlife.">
-    <meta name="author" content="Tim Chong">
-    <link rel="canonical" href="https://tomotu.github.io/Tims-Website/">
-    <link rel="preload" as="image" href="images/hero/SBD-Cup2025-7.jpg" fetchpriority="high">
-
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://tomotu.github.io/Tims-Website/">
-    <meta property="og:title" content="Tim Chong — Photography">
-    <meta property="og:description" content="Photography by Tim Chong — portraits, corporate, sports, and events &amp; nightlife.">
-    <meta property="og:image" content="https://tomotu.github.io/Tims-Website/images/og-preview.jpg">
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Tim Chong — Photography">
-    <meta name="twitter:description" content="Photography by Tim Chong — portraits, corporate, sports, and events &amp; nightlife.">
-    <meta name="twitter:image" content="https://tomotu.github.io/Tims-Website/images/og-preview.jpg">
-
-    <meta name="theme-color" content="#1c1c1a">
-
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "Tim Chong",
-      "jobTitle": "Photographer",
-      "url": "https://tomotu.github.io/Tims-Website/"
-    }
-    </script>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=20260611">
+<link rel="preload" as="image" href="images/hero/SBD-Cup2025-7.jpg" fetchpriority="high" />
+<link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-    <div id="scroll-progress"></div>
+<!-- film grain -->
+<div class="grain"></div>
 
-    <div id="preloader">
-        <div class="pl-panel pl-top"></div>
-        <div class="pl-panel pl-bottom"></div>
-        <div class="pl-content">
-            <span class="preloader-name">Tim Chong</span>
-            <div class="pl-bar"><span class="pl-bar-fill"></span></div>
-        </div>
-        <span class="pl-count"><span id="pl-count-num">0</span>%</span>
+<!-- scroll progress -->
+<div id="scroll-progress"></div>
+
+<!-- preloader -->
+<div class="loader" id="loader">
+  <div class="loader-inner">
+    <div class="loader-name">Tim Chong</div>
+    <div class="loader-bar"><i id="loaderBar"></i></div>
+    <div class="loader-pct"><span id="loaderPct">0</span> — Photography</div>
+  </div>
+</div>
+
+<!-- nav -->
+<header class="nav" id="nav">
+  <a href="#hero" class="nav-logo">Tim Chong</a>
+  <nav class="nav-links main">
+    <a href="#work"    class="nav-link">Work</a>
+    <a href="#about"   class="nav-link">About</a>
+    <a href="#contact" class="nav-link">Contact</a>
+  </nav>
+  <div class="nav-right">
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+    <button class="nav-burger" id="burger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- mobile menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#work">Work</a>
+  <a href="#about">About</a>
+  <a href="#contact">Contact</a>
+</div>
+
+<!-- hero -->
+<section class="hero" id="hero">
+  <div class="hero-slides" id="heroSlides"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-center">
+    <h1 class="hero-title">Tim Chong</h1>
+    <div class="hero-sub">Photography</div>
+  </div>
+  <div class="hero-foot"><div class="hero-dots" id="heroDots"></div></div>
+  <a href="#work" class="scroll-cue" aria-label="Scroll to work">↓</a>
+</section>
+
+<!-- work -->
+<section class="section" id="work">
+  <div class="section-head reveal">
+    <div>
+      <div class="section-index">01 — Selected</div>
+      <h2 class="section-title">Work</h2>
     </div>
-
-    <nav id="navbar">
-        <a href="#hero" class="nav-logo">Tim Chong</a>
-        <div class="nav-links">
-            <a href="#gallery">Work</a>
-            <a href="#about">About</a>
-            <a href="#contact">Contact</a>
-        </div>
-        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">◑</button>
-        <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-    </nav>
-
-    <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
-        <a href="#gallery" class="mobile-link">Work</a>
-        <a href="#about" class="mobile-link">About</a>
-        <a href="#contact" class="mobile-link">Contact</a>
+    <div class="filters" id="filters">
+      <button class="filter on"  data-filter="all">All</button>
+      <button class="filter"     data-filter="portraits">Portraits</button>
+      <button class="filter"     data-filter="corporate">Corporate</button>
+      <button class="filter"     data-filter="sports">Sports</button>
+      <button class="filter"     data-filter="events">Events &amp; Nightlife</button>
     </div>
+  </div>
+  <div class="gallery" id="gallery"></div>
+</section>
 
-    <section id="hero">
-        <div class="hero-slides" id="hero-slides">
-            <div class="hero-slide active" style="background-image:url('images/hero/SBD-Cup2025-7.jpg')"></div>
-            <div class="hero-slide"        style="background-image:url('images/hero/Alicia-20thMay2026-67.jpg')"></div>
-            <div class="hero-slide"        style="background-image:url('images/hero/DarylPadelTournament-23rdMay2026-53.jpg')"></div>
-            <div class="hero-slide"        style="background-image:url('images/hero/Kyo-28thDec2025-35.jpg')"></div>
-        </div>
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            <h1>Tim Chong</h1>
-            <p class="hero-tagline">Photography</p>
-        </div>
-        <div class="hero-dots" id="hero-dots"></div>
-        <a href="#gallery" class="scroll-indicator" aria-label="Scroll to gallery">↓</a>
-    </section>
-
-    <section id="collage" aria-hidden="true"></section>
-
-    <section id="gallery">
-        <div class="section-header">
-            <h2>Work</h2>
-            <span id="photo-count" class="photo-count"></span>
-        </div>
-        <div class="filters" id="filters">
-            <button class="filter-btn active" data-category="all">All</button>
-            <button class="filter-btn" data-category="portraits">Portraits</button>
-            <button class="filter-btn" data-category="corporate">Corporate</button>
-            <button class="filter-btn" data-category="sports">Sports</button>
-            <button class="filter-btn" data-category="events">Events &amp; Nightlife</button>
-        </div>
-        <div id="mobile-gallery"></div>
-        <div class="masonry-grid" id="masonry-grid">
-
-            <div class="photo-item" data-category="portraits">
-                <img loading="lazy" decoding="async" src="images/portraits/Alicia-20thMay2026-67.jpg" alt="Portrait">
-            </div>
-            <div class="photo-item" data-category="corporate">
-                <img loading="lazy" decoding="async" src="images/corporate/Hyatt-21stFeb2026-31.jpg" alt="Corporate">
-            </div>
-            <div class="photo-item" data-category="sports">
-                <img loading="lazy" decoding="async" src="images/sports/DarylPadelTournament-23rdMay2026-53.jpg" alt="Sports">
-            </div>
-            <div class="photo-item" data-category="corporate">
-                <img loading="lazy" decoding="async" src="images/corporate/Wasco-OTCMarch2026-220.jpg" alt="Corporate">
-            </div>
-            <div class="photo-item" data-category="portraits">
-                <img loading="lazy" decoding="async" src="images/portraits/AmandaChen-Birthday-8thNov2025-21.jpg" alt="Portrait">
-            </div>
-            <div class="photo-item" data-category="corporate">
-                <img loading="lazy" decoding="async" src="images/corporate/Hyatt-21stFeb2026-42.jpg" alt="Corporate">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Lane23-EliBrown-26thApril2025-22.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="sports">
-                <img loading="lazy" decoding="async" src="images/sports/DarylPadelTournament-23rdMay2026-50.jpg" alt="Sports">
-            </div>
-
-            <div class="photo-item" data-category="portraits">
-                <img loading="lazy" decoding="async" src="images/portraits/Anastasya-Bachelorettes-5thNov2025-36.jpg" alt="Portrait">
-            </div>
-            <div class="photo-item" data-category="corporate">
-                <img loading="lazy" decoding="async" src="images/corporate/WascoGreenergy-Agm-15thMay2026-9.jpg" alt="Corporate">
-            </div>
-            <div class="photo-item" data-category="portraits">
-                <img loading="lazy" decoding="async" src="images/portraits/AmandaChen-Birthday-8thNov2025-38.jpg" alt="Portrait">
-            </div>
-            <div class="photo-item" data-category="corporate">
-                <img loading="lazy" decoding="async" src="images/corporate/Hyatt-21stFeb2026-59.jpg" alt="Corporate">
-            </div>
-            <div class="photo-item" data-category="sports">
-                <img loading="lazy" decoding="async" src="images/sports/SBD-18May2023-70.jpg" alt="Sports">
-            </div>
-            <div class="photo-item" data-category="portraits">
-                <img loading="lazy" decoding="async" src="images/portraits/Anastasya-Bachelorettes-5thNov2025-40.jpg" alt="Portrait">
-            </div>
-
-            <div class="photo-item" data-category="corporate">
-                <img loading="lazy" decoding="async" src="images/corporate/Wasco-OTCMarch2026-256.jpg" alt="Corporate">
-            </div>
-            <div class="photo-item" data-category="portraits">
-                <img loading="lazy" decoding="async" src="images/portraits/AmandaChen-Birthday-8thNov2025-48.jpg" alt="Portrait">
-            </div>
-            <div class="photo-item" data-category="corporate">
-                <img loading="lazy" decoding="async" src="images/corporate/WascoGreenergy-Townhall-31stOct2025-57.jpg" alt="Corporate">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Kyo-28thDec2025-35.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="corporate">
-                <img loading="lazy" decoding="async" src="images/corporate/Hyatt-21stFeb2026-67.jpg" alt="Corporate">
-            </div>
-            <div class="photo-item" data-category="portraits">
-                <img loading="lazy" decoding="async" src="images/portraits/Anastasya-Bachelorettes-5thNov2025-70.jpg" alt="Portrait">
-            </div>
-
-            <div class="photo-item" data-category="corporate">
-                <img loading="lazy" decoding="async" src="images/corporate/WascoRaya-24thApril2026-40.jpg" alt="Corporate">
-            </div>
-            <div class="photo-item" data-category="sports">
-                <img loading="lazy" decoding="async" src="images/sports/Wasco-BlueRibbonRun-17thMay2026-8.jpg" alt="Sports">
-            </div>
-            <div class="photo-item" data-category="portraits">
-                <img loading="lazy" decoding="async" src="images/portraits/Anastasya-Bachelorettes-5thNov2025-99.jpg" alt="Portrait">
-            </div>
-            <div class="photo-item" data-category="corporate">
-                <img loading="lazy" decoding="async" src="images/corporate/Hyatt-21stFeb2026-70.jpg" alt="Corporate">
-            </div>
-            <div class="photo-item" data-category="portraits">
-                <img loading="lazy" decoding="async" src="images/portraits/Arif%26Jaja-Prewed-25thSept2025-3.jpg" alt="Portrait">
-            </div>
-            <div class="photo-item" data-category="corporate">
-                <img loading="lazy" decoding="async" src="images/corporate/WascoGreenergy-Townhall-31stOct2025-73.jpg" alt="Corporate">
-            </div>
-
-            <div class="photo-item" data-category="sports">
-                <img loading="lazy" decoding="async" src="images/sports/Wasco-BlueRibbonRun-17thMay2026-12.jpg" alt="Sports">
-            </div>
-            <div class="photo-item" data-category="portraits">
-                <img loading="lazy" decoding="async" src="images/portraits/Arif%26Jaja-Prewed-25thSept2025-20.jpg" alt="Portrait">
-            </div>
-            <div class="photo-item" data-category="corporate">
-                <img loading="lazy" decoding="async" src="images/corporate/Wasco-OTCMarch2026-299.jpg" alt="Corporate">
-            </div>
-            <div class="photo-item" data-category="portraits">
-                <img loading="lazy" decoding="async" src="images/portraits/Arif%26Jaja-Prewed-25thSept2025-35.jpg" alt="Portrait">
-            </div>
-            <div class="photo-item" data-category="corporate">
-                <img loading="lazy" decoding="async" src="images/corporate/Hyatt-21stFeb2026-85.jpg" alt="Corporate">
-            </div>
-            <div class="photo-item" data-category="sports">
-                <img loading="lazy" decoding="async" src="images/sports/Wasco-BlueRibbonRun-17thMay2026-15.jpg" alt="Sports">
-            </div>
-
-            <div class="photo-item" data-category="portraits">
-                <img loading="lazy" decoding="async" src="images/portraits/Arif%26Jaja-Prewed-25thSept2025-102.jpg" alt="Portrait">
-            </div>
-            <div class="photo-item" data-category="corporate">
-                <img loading="lazy" decoding="async" src="images/corporate/WascoGreenergy-Townhall-31stOct2025-94.jpg" alt="Corporate">
-            </div>
-            <div class="photo-item" data-category="corporate">
-                <img loading="lazy" decoding="async" src="images/corporate/WascoRaya-24thApril2026-45.jpg" alt="Corporate">
-            </div>
-            <div class="photo-item" data-category="sports">
-                <img loading="lazy" decoding="async" src="images/sports/Wasco-BlueRibbonRun-17thMay2026-30.jpg" alt="Sports">
-            </div>
-            <div class="photo-item" data-category="corporate">
-                <img loading="lazy" decoding="async" src="images/corporate/WascoRaya-24thApril2026-73.jpg" alt="Corporate">
-            </div>
-            <div class="photo-item" data-category="corporate">
-                <img loading="lazy" decoding="async" src="images/corporate/WascoRaya-24thApril2026-120.jpg" alt="Corporate">
-            </div>
-            <div class="photo-item" data-category="corporate">
-                <img loading="lazy" decoding="async" src="images/corporate/WascoRaya-24thApril2026-140.jpg" alt="Corporate">
-            </div>
-
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/TeeraMSkybar-30April2024-16.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Kyo-28thDec2025-124.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Kyo-24thDec2025-Export-32.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Kyo-24thDec2025-Export-50.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Kyo-24thDec2025-Export-51.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Kyo-24thDec2025-Export-56.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Kyo-24thDec2025-Export-79.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Kyo-25thDec2025-Export-40.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Kyo-31stDec2025-36.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Kyo-31stDec2025-39.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Kyo-31stDec2025-41.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Kyo-18thDec2025-17.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Kyo-18thDec2025-21.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Kyo-18thDec2025-25.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Kyo-1stFeb2026-43.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Kyo-1stFeb2026-81.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Kyo-13thFeb2026-7.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Kyo-13thFeb2026-36.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Kyo21stJan2026-Export-74.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Kyo21stJan2026-Export-107.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Kyo21stJan2026-Export-109.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Kyo21stJan2026-Export-113.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Kyo21stJan2026-Export-118.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/Kyo21stJan2026-Export-157.jpg" alt="Events &amp; Nightlife">
-            </div>
-            <div class="photo-item" data-category="events">
-                <img loading="lazy" decoding="async" src="images/events/EvenIf-Residance-1stFeb2026-42.jpg" alt="Events &amp; Nightlife">
-            </div>
-
-        </div>
-    </section>
-
-    <section id="about">
-        <div class="about-name">
-            <p class="about-role-label">Photographer · Singapore</p>
-            <h2>Timothy<br>Chong</h2>
-        </div>
-        <div class="about-image">
-            <img loading="lazy" decoding="async" src="https://picsum.photos/id/1080/700/900" alt="Tim Chong">
-        </div>
-        <div class="about-text">
-            <p>
-                I'm Tim Chong, a photographer based in Singapore. My work covers portraits,
-                sports, events, and nightlife — I'm drawn to unguarded moments, the kind that
-                happen between the posed ones.
-            </p>
-            <p>
-                Whether it's a padel court at golden hour or a party at 2am, the approach
-                is the same: stay ready, stay quiet, let the scene come to you.
-            </p>
-            <p>
-                Available for commissions and collaborations.
-                <a href="mailto:tkchong3@gmail.com" class="about-email">Get in touch.</a>
-            </p>
-        </div>
-    </section>
-
-    <section id="contact">
-        <div class="contact-inner">
-            <div class="contact-left">
-                <p class="contact-eyebrow">Get in touch</p>
-                <h2>Let's work<br>together.</h2>
-            </div>
-            <div class="contact-right">
-                <a href="mailto:tkchong3@gmail.com" class="contact-email">tkchong3@gmail.com</a>
-                <div class="social-links">
-                    <a href="https://www.instagram.com/a_wild_timothy" target="_blank" rel="noopener me">Instagram</a>
-                </div>
-                <p class="contact-note">Available for commissions,<br>collaborations, and print inquiries.</p>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <span>© <span id="copyright-year"></span> Tim Chong</span>
-        <span>Photography</span>
-    </footer>
-
-    <!-- Lightbox -->
-    <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
-        <button class="lightbox-close" aria-label="Close">×</button>
-        <button class="lightbox-prev" aria-label="Previous photo">‹</button>
-        <button class="lightbox-next" aria-label="Next photo">›</button>
-        <div class="lightbox-img-container">
-            <img id="lightbox-img" src="" alt="" title="Click to zoom">
-        </div>
-        <div class="lightbox-caption" id="lightbox-caption"></div>
-        <div class="lightbox-counter" id="lightbox-counter"></div>
-        <a id="lightbox-download" class="lightbox-download" href="#" download target="_blank" rel="noopener" aria-label="Download photo">↓</a>
+<!-- about -->
+<section class="section about" id="about">
+  <div class="about-grid">
+    <div class="about-portrait reveal">
+      <image-slot
+        src="images/portraits/Anastasya-Bachelorettes-5thNov2025-36.jpg"
+        placeholder="Portrait"
+        shape="rect">
+      </image-slot>
+      <span class="frame-tag">Self — Singapore</span>
     </div>
+    <div class="about-body">
+      <div class="eyebrow reveal">02 — About</div>
+      <h2 class="about-name reveal" data-d="1">Timothy <em>Chong</em></h2>
+      <p class="about-lead reveal" data-d="1">A photographer based in Singapore, drawn to the unguarded moments — the ones that happen between the posed ones.</p>
+      <p class="about-text reveal" data-d="2">My work covers portraits, corporate, sports, and events &amp; nightlife. Whether it's a padel court at golden hour or a party at 2am, the approach is the same: stay ready, stay quiet, and let the scene come to you.</p>
+      <p class="about-text reveal" data-d="2">Available for commissions and collaborations across Singapore and beyond. <a href="#contact">Get in touch →</a></p>
+      <div class="about-specs reveal" data-d="3">
+        <div>
+          <div class="spec-label">Based in</div>
+          <div class="spec-val">Singapore</div>
+        </div>
+        <div>
+          <div class="spec-label">Shooting since</div>
+          <div class="spec-val">2023</div>
+        </div>
+        <div>
+          <div class="spec-label">Focus</div>
+          <div class="spec-val">People &amp; Motion</div>
+        </div>
+      </div>
+      <div class="signature reveal" data-d="3">— Tim</div>
+    </div>
+  </div>
+</section>
 
-    <button id="back-to-top" aria-label="Back to top">↑</button>
+<!-- contact -->
+<section class="section contact" id="contact">
+  <div class="contact-bg" id="contactBg"></div>
+  <div class="contact-inner">
+    <div class="eyebrow center reveal">03 — Contact</div>
+    <h2 class="contact-title reveal" data-d="1">Let's work <em>together.</em></h2>
+    <a href="mailto:tkchong3@gmail.com" class="contact-email reveal" data-d="2">tkchong3@gmail.com</a>
+    <p class="contact-avail reveal" data-d="2">Available for commissions, collaborations, and print inquiries. Most replies within a day.</p>
+    <div class="contact-meta reveal" data-d="3">
+      <a href="https://www.instagram.com/a_wild_timothy" target="_blank" rel="noopener me">Instagram</a>
+      <span class="dot-sep"></span>
+      <a href="mailto:tkchong3@gmail.com">Email</a>
+      <span class="dot-sep"></span>
+      <span>Singapore</span>
+    </div>
+  </div>
+</section>
 
-    <script src="script.js?v=20260609"></script>
+<!-- footer -->
+<footer class="footer">
+  <span>© <span id="year"></span> Tim Chong Photography</span>
+  <span class="to-top" id="toTop">Back to top ↑</span>
+</footer>
+
+<!-- lightbox -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <button class="lb-close" id="lbClose" aria-label="Close">✕</button>
+  <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous">‹</button>
+  <button class="lb-nav lb-next" id="lbNext" aria-label="Next">›</button>
+  <div class="lb-img-wrap">
+    <img class="lb-img" id="lbImg" alt="" />
+    <div class="lb-bar">
+      <span id="lbCat"></span>
+      <span id="lbCount"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+  // copyright year
+  document.getElementById('year').textContent = new Date().getFullYear();
+  // restore theme before paint to avoid flash
+  try {
+    const t = localStorage.getItem('tc-theme');
+    if (t) document.documentElement.dataset.theme = t;
+  } catch (_) {}
+</script>
+
+<script src="image-slot.js"></script>
+<script src="app.js"></script>
+
+<!-- Tweaks panel (optional live design controls) -->
+<div id="tweaks-root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel">
+const TC_TWEAKS = {
+  accent: '#cf8d6f',
+  grain:  true,
+  theme:  'dark',
+};
+
+function TimTweaks() {
+  const [t, setTweak] = useTweaks(TC_TWEAKS);
+  React.useEffect(() => {
+    document.documentElement.style.setProperty('--accent', t.accent);
+    document.documentElement.dataset.grain = t.grain ? 'on' : 'off';
+    document.documentElement.dataset.theme = t.theme;
+    try { localStorage.setItem('tc-theme', t.theme); } catch (_) {}
+  }, [t.accent, t.grain, t.theme]);
+
+  return (
+    <TweaksPanel>
+      <TweakColor label="Accent" value={t.accent}
+        options={['#c9ac7d', '#b6bcc4', '#cf8d6f', '#d9cfc0', '#8a9a8e']}
+        onChange={v => setTweak('accent', v)} />
+      <TweakRadio label="Theme" value={t.theme} options={['dark', 'light']}
+        onChange={v => setTweak('theme', v)} />
+      <TweakToggle label="Film grain" value={t.grain}
+        onChange={v => setTweak('grain', v)} />
+    </TweaksPanel>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('tweaks-root')).render(<TimTweaks />);
+</script>
 
 </body>
 </html>
